@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useAnnounce } from "../components/Announcer";
 import Modal from "../components/Modal";
 import { useCart } from "./CartContext";
 import { formatPrice } from "./format";
@@ -10,6 +11,15 @@ export function makeOrderNumber(rand = Math.random) {
 export default function CheckoutDialog({ open, onClose }) {
   const { lines, subtotalCents, clear } = useCart();
   const [orderNumber, setOrderNumber] = useState(null);
+  const announce = useAnnounce();
+  const successRef = useRef(null);
+
+  // The focused "Place demo order" button unmounts; move focus to the confirmation and announce it.
+  useEffect(() => {
+    if (!orderNumber) return;
+    successRef.current?.focus();
+    announce(`Order placed: ${orderNumber}`);
+  }, [orderNumber, announce]);
 
   const close = () => {
     setOrderNumber(null);
@@ -25,7 +35,9 @@ export default function CheckoutDialog({ open, onClose }) {
   if (orderNumber) {
     content = (
       <>
-        <h2 id="checkout-title">Thanks, order placed!</h2>
+        <h2 id="checkout-title" ref={successRef} tabIndex={-1}>
+          Thanks, order placed!
+        </h2>
         <p>Your demo order number is</p>
         <p className="order-number">{orderNumber}</p>
         <p className="note">No payment was taken and nothing will ship: this is a demo store.</p>

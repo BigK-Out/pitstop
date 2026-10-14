@@ -39,7 +39,7 @@ export function renderSeo(html, brand, products) {
   const json = JSON.stringify(productJsonLd(brand, products)).replace(/</g, "\\u003c");
   return filled.replace(
     "</head>",
-    `  <script type="application/ld+json">${json}</script>\n  </head>`,
+    () => `  <script type="application/ld+json">${json}</script>\n  </head>`,
   );
 }
 

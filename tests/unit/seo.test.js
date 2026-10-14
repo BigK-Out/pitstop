@@ -31,4 +31,12 @@ describe("seo", () => {
     // "</script>" inside data must not close the tag early
     expect(out).toContain("A\\u003c/script>");
   });
+
+  it("keeps special replacement patterns in content literal", () => {
+    const tricky = [
+      { id: "b", name: "B", description: "cost $& and $' and $` and $$", priceCents: 100 },
+    ];
+    const out = renderSeo("<head></head>", brand, tricky);
+    expect(out).toContain("cost $& and $' and $` and $$");
+  });
 });

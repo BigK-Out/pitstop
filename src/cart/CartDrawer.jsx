@@ -11,8 +11,10 @@ export default function CartDrawer({ open, onClose, onCheckout }) {
   // When a line disappears its buttons go with it; keep focus inside the drawer.
   const focusHeading = () => headingRef.current?.focus();
 
-  const changeQty = (id, qty) => {
+  const changeQty = (id, qty, event) => {
     if (qty <= 0) focusHeading();
+    // "+" disables itself at the cap; hand focus to the line's "-" so it isn't dropped.
+    if (qty >= MAX_QTY) event.currentTarget.parentElement.querySelector("button").focus();
     setQty(id, qty);
   };
 
@@ -50,7 +52,7 @@ export default function CartDrawer({ open, onClose, onCheckout }) {
                   <div className="stepper" role="group" aria-label={`${product.name} quantity`}>
                     <button
                       type="button"
-                      onClick={() => changeQty(product.id, qty - 1)}
+                      onClick={(e) => changeQty(product.id, qty - 1, e)}
                       aria-label={`Decrease ${product.name}`}
                     >
                       −
@@ -58,7 +60,7 @@ export default function CartDrawer({ open, onClose, onCheckout }) {
                     <span>{qty}</span>
                     <button
                       type="button"
-                      onClick={() => changeQty(product.id, qty + 1)}
+                      onClick={(e) => changeQty(product.id, qty + 1, e)}
                       aria-label={`Increase ${product.name}`}
                       disabled={qty >= MAX_QTY}
                     >

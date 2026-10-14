@@ -52,6 +52,15 @@ describe("cart drawer", () => {
     expect(within(drawer).getByRole("button", { name: "Increase Classic Dried" })).toBeDisabled();
   });
 
+  it("moves focus to Decrease when Increase reaches the maximum", async () => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ items: { classic: 98 } }));
+    const user = userEvent.setup();
+    render(<App />);
+    const drawer = await openCartWith(user);
+    await user.click(within(drawer).getByRole("button", { name: "Increase Classic Dried" }));
+    expect(within(drawer).getByRole("button", { name: "Decrease Classic Dried" })).toHaveFocus();
+  });
+
   it("closes with the close button", async () => {
     const user = userEvent.setup();
     render(<App />);
@@ -70,7 +79,10 @@ describe("checkout", () => {
     const checkout = screen.getByRole("dialog", { name: "Checkout" });
     expect(within(checkout).getByText("1 × Dark Choc-Dipped")).toBeInTheDocument();
     await user.click(within(checkout).getByRole("button", { name: "Place demo order" }));
-    expect(within(checkout).getByRole("heading", { name: /order placed/ })).toBeInTheDocument();
+    const heading = within(checkout).getByRole("heading", { name: /order placed/ });
+    expect(heading).toHaveFocus();
+    const number = within(checkout).getByText(/^PIT-\d{6}$/).textContent;
+    expect(await screen.findByText(`Order placed: ${number}`)).toBeInTheDocument();
     expect(within(checkout).getByText(/^PIT-\d{6}$/)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Cart 0 items" })).toBeInTheDocument();
     await user.click(within(checkout).getByRole("button", { name: "Back to the shop" }));

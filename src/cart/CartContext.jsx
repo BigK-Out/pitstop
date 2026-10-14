@@ -46,7 +46,7 @@ export function CartProvider({ products, children }) {
 
   useEffect(() => {
     const onStorage = (event) => {
-      if (event.key !== STORAGE_KEY) return;
+      if (event.key !== null && event.key !== STORAGE_KEY) return;
       dispatch({ type: "replace", cart: parseCart(event.newValue, products) });
     };
     window.addEventListener("storage", onStorage);

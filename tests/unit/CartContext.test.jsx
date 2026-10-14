@@ -67,6 +67,16 @@ describe("CartContext", () => {
     expect(result.current.count).toBe(2);
   });
 
+  it("empties the cart when another tab clears storage (key null)", () => {
+    const { result } = renderCart();
+    act(() => result.current.add("classic"));
+    expect(result.current.count).toBe(1);
+    act(() => {
+      window.dispatchEvent(new StorageEvent("storage", { key: null, newValue: null }));
+    });
+    expect(result.current.count).toBe(0);
+  });
+
   it("throws a clear error outside the provider", () => {
     vi.spyOn(console, "error").mockImplementation(() => {});
     expect(() => renderHook(() => useCart())).toThrow("useCart must be used inside <CartProvider>");

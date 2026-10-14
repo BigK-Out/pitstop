@@ -42,8 +42,15 @@ test("Esc closes the cart and returns focus to the cart button", async ({ page }
 test("page works without cherry.glb and logs no unexpected errors", async ({ page }) => {
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
+  page.on("console", (message) => {
+    if (message.type() === "error") errors.push(message.text());
+  });
   await page.goto("/");
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
   await page.waitForTimeout(1500);
-  expect(errors.filter((message) => !message.includes("cherry.glb"))).toEqual([]);
+  // Allowlist: the optional model file is expected to be missing (404).
+  const unexpected = errors.filter(
+    (message) => !message.includes("cherry.glb") && !message.includes("Failed to load resource"),
+  );
+  expect(unexpected).toEqual([]);
 });
