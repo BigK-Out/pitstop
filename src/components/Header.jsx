@@ -22,16 +22,9 @@ export default function Header({ onOpenCart }) {
           </li>
         </ul>
       </nav>
-      <button
-        type="button"
-        className="button button-ghost"
-        onClick={onOpenCart}
-        aria-label={`Cart, ${count} ${count === 1 ? "item" : "items"}`}
-      >
-        Cart
-        <span className="badge" aria-hidden="true">
-          {count}
-        </span>
+      <button type="button" className="button button-ghost" onClick={onOpenCart}>
+        Cart <span className="badge">{count}</span>
+        <span className="visually-hidden"> {count === 1 ? "item" : "items"}</span>
       </button>
     </header>
   );

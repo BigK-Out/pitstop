@@ -12,6 +12,7 @@ export default defineConfig({
   plugins: [react(), seoPlugin(brand, products)],
   server: { open: true },
   preview: { open: false },
+  build: { sourcemap: true },
   test: {
     environment: "jsdom",
     setupFiles: ["./tests/setup.js"],

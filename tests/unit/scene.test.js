@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { createCherryGeometry } from "../../src/scene/cherryGeometry";
 import { pickTier } from "../../src/scene/sceneTier";
+import { modelExists } from "../../src/scene/modelExists";
 
 describe("pickTier", () => {
   it("uses the full scene on capable desktops", () => {
@@ -35,5 +36,25 @@ describe("createCherryGeometry", () => {
     geometry.computeBoundingBox();
     const center = geometry.boundingBox.getCenter(geometry.boundingBox.min.clone());
     expect(center.length()).toBeLessThan(1e-6);
+  });
+});
+
+describe("modelExists", () => {
+  const reply = (ok, type) => async () => ({ ok, headers: new Headers({ "content-type": type }) });
+
+  it("accepts a real model response", async () => {
+    expect(await modelExists("x", reply(true, "model/gltf-binary"))).toBe(true);
+  });
+
+  it("treats 404 and html fallbacks as missing", async () => {
+    expect(await modelExists("x", reply(false, "text/plain"))).toBe(false);
+    expect(await modelExists("x", reply(true, "text/html; charset=utf-8"))).toBe(false);
+  });
+
+  it("treats network errors as missing", async () => {
+    const boom = async () => {
+      throw new Error("offline");
+    };
+    expect(await modelExists("x", boom)).toBe(false);
   });
 });

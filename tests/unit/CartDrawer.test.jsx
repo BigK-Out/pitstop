@@ -11,7 +11,7 @@ async function openCartWith(user, ...names) {
   for (const name of names) {
     await user.click(screen.getByRole("button", { name: `Add to cart: ${name}` }));
   }
-  await user.click(screen.getByRole("button", { name: /^Cart, / }));
+  await user.click(screen.getByRole("button", { name: /^Cart \d/ }));
   return screen.getByRole("dialog", { name: "Your cart" });
 }
 
@@ -41,7 +41,7 @@ describe("cart drawer", () => {
     const drawer = await openCartWith(user, "Classic Dried", "Sour Punch");
     await user.click(within(drawer).getByRole("button", { name: "Remove Sour Punch" }));
     expect(within(drawer).queryByText("Sour Punch")).not.toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Cart, 1 item" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Cart 1 item" })).toBeInTheDocument();
   });
 
   it("disables increase at 99", async () => {
@@ -72,7 +72,7 @@ describe("checkout", () => {
     await user.click(within(checkout).getByRole("button", { name: "Place demo order" }));
     expect(within(checkout).getByRole("heading", { name: /order placed/ })).toBeInTheDocument();
     expect(within(checkout).getByText(/^PIT-\d{6}$/)).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Cart, 0 items" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Cart 0 items" })).toBeInTheDocument();
     await user.click(within(checkout).getByRole("button", { name: "Back to the shop" }));
     expect(checkout).not.toHaveAttribute("open");
   });

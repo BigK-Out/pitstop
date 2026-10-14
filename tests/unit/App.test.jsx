@@ -19,9 +19,9 @@ describe("App", () => {
   it("adding a product updates the badge and announces it", async () => {
     const user = userEvent.setup();
     render(<App />);
-    expect(screen.getByRole("button", { name: "Cart, 0 items" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Cart 0 items" })).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Add to cart: Classic Dried" }));
-    expect(screen.getByRole("button", { name: "Cart, 1 item" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Cart 1 item" })).toBeInTheDocument();
     expect(await screen.findByText("Added Classic Dried to cart")).toBeInTheDocument();
   });
 });

@@ -3,7 +3,8 @@ import { DepthOfField, EffectComposer } from "@react-three/postprocessing";
 import { Suspense, useEffect, useState } from "react";
 import ErrorBoundary from "../components/ErrorBoundary";
 import Cherry from "./Cherry";
-import CherryModel from "./CherryModel";
+import CherryModel, { MODEL_URL } from "./CherryModel";
+import { modelExists } from "./modelExists";
 import ProceduralCherry from "./ProceduralCherry";
 import { useSceneTier } from "./sceneTier";
 
@@ -45,6 +46,15 @@ function useSceneVisible() {
 export default function Background() {
   const tier = useSceneTier();
   const visible = useSceneVisible();
+  // null while checking; the GLB is only requested once we know it exists.
+  const [hasModel, setHasModel] = useState(null);
+  useEffect(() => {
+    let live = true;
+    modelExists(MODEL_URL).then((ok) => live && setHasModel(ok));
+    return () => {
+      live = false;
+    };
+  }, []);
   const frameloop = !tier.animate ? "demand" : visible ? "always" : "never";
 
   return (
@@ -59,19 +69,26 @@ export default function Background() {
         <ambientLight intensity={1.5} />
         <directionalLight position={[10, 10, 10]} intensity={2.5} />
 
-        <ErrorBoundary
-          fallback={
-            <Cherries count={tier.count}>
-              <ProceduralCherry />
-            </Cherries>
-          }
-        >
-          <Suspense fallback={null}>
-            <Cherries count={tier.count}>
-              <CherryModel />
-            </Cherries>
-          </Suspense>
-        </ErrorBoundary>
+        {hasModel === false && (
+          <Cherries count={tier.count}>
+            <ProceduralCherry />
+          </Cherries>
+        )}
+        {hasModel && (
+          <ErrorBoundary
+            fallback={
+              <Cherries count={tier.count}>
+                <ProceduralCherry />
+              </Cherries>
+            }
+          >
+            <Suspense fallback={null}>
+              <Cherries count={tier.count}>
+                <CherryModel />
+              </Cherries>
+            </Suspense>
+          </ErrorBoundary>
+        )}
 
         {tier.depthOfField && (
           <EffectComposer>
