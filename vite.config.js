@@ -6,6 +6,14 @@ import react from "@vitejs/plugin-react";
 process.env.BROWSER ??= "google-chrome";
 
 export default defineConfig({
+  base: "./",
   plugins: [react()],
   server: { open: true },
+  preview: { open: false },
+  test: {
+    environment: "jsdom",
+    setupFiles: ["./tests/setup.js"],
+    include: ["tests/unit/**/*.test.{js,jsx}"],
+    restoreMocks: true,
+  },
 });
