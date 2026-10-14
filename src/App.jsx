@@ -1,5 +1,7 @@
 import { useState } from "react";
+import CartDrawer from "./cart/CartDrawer";
 import { CartProvider } from "./cart/CartContext";
+import CheckoutDialog from "./cart/CheckoutDialog";
 import { AnnouncerProvider } from "./components/Announcer";
 import Faq from "./components/Faq";
 import Footer from "./components/Footer";
@@ -10,7 +12,8 @@ import Story from "./components/Story";
 import { products } from "./content";
 
 export default function App() {
-  const [, setCartOpen] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
+  const [checkoutOpen, setCheckoutOpen] = useState(false);
 
   return (
     <AnnouncerProvider>
@@ -28,6 +31,15 @@ export default function App() {
           </div>
         </main>
         <Footer />
+        <CartDrawer
+          open={cartOpen}
+          onClose={() => setCartOpen(false)}
+          onCheckout={() => {
+            setCartOpen(false);
+            setCheckoutOpen(true);
+          }}
+        />
+        <CheckoutDialog open={checkoutOpen} onClose={() => setCheckoutOpen(false)} />
       </CartProvider>
     </AnnouncerProvider>
   );

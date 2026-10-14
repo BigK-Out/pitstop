@@ -273,3 +273,175 @@ main,
   padding: 0;
   list-style: none;
 }
+
+/* Dialogs */
+dialog {
+  padding: 0;
+  border: 0;
+  background: var(--cream);
+  color: var(--ink);
+}
+
+dialog::backdrop {
+  background: rgb(42 11 18 / 0.45);
+}
+
+.drawer {
+  width: min(420px, 100%);
+  max-width: 100%;
+  height: 100dvh;
+  max-height: none;
+  margin: 0 0 0 auto;
+  border-radius: 24px 0 0 24px;
+}
+
+.drawer-inner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 1.25rem;
+}
+
+.drawer-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.drawer-head h2 {
+  margin: 0;
+  font-size: 1.6rem;
+}
+
+.lines {
+  display: grid;
+  flex: 1;
+  align-content: start;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.line {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 0.4rem 0.75rem;
+  padding: 0.85rem 1rem;
+  border-radius: 14px;
+  background: #fff;
+}
+
+.line-name,
+.line-total {
+  font-weight: 600;
+}
+
+.line-total {
+  text-align: right;
+}
+
+.line .link-button {
+  justify-self: end;
+}
+
+.stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.stepper button {
+  width: 36px;
+  height: 36px;
+  border: 2px solid var(--cherry);
+  border-radius: 50%;
+  background: #fff;
+  color: var(--cherry);
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.stepper button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.drawer-foot {
+  display: grid;
+  gap: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgb(122 11 31 / 0.12);
+}
+
+.subtotal {
+  display: flex;
+  justify-content: space-between;
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.empty {
+  display: grid;
+  flex: 1;
+  place-content: center;
+  justify-items: center;
+  gap: 1rem;
+  color: var(--muted);
+  text-align: center;
+}
+
+.checkout {
+  width: min(460px, 100% - 2rem);
+  border-radius: 24px;
+}
+
+.checkout-inner {
+  display: grid;
+  gap: 1rem;
+  padding: 1.75rem;
+}
+
+.checkout h2 {
+  margin: 0;
+  font-size: 1.8rem;
+}
+
+.checkout p {
+  margin: 0;
+}
+
+.summary {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.summary li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.order-number {
+  font: 700 1.6rem var(--font-display);
+  color: var(--cherry);
+}
+
+.note {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
