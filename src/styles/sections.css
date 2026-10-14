@@ -250,6 +250,11 @@ main,
   color: #fff;
 }
 
+/* Global focus ring is cherry, which has ~2.3:1 against the dark footer. */
+.site-footer :focus-visible {
+  outline-color: #fff;
+}
+
 .footer-inner {
   display: flex;
   flex-wrap: wrap;
