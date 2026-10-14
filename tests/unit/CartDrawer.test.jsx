@@ -1,9 +1,11 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import App from "../../src/App";
 import { STORAGE_KEY } from "../../src/cart/CartContext";
 import { makeOrderNumber } from "../../src/cart/CheckoutDialog";
+
+vi.mock("../../src/scene/webgl", () => ({ hasWebGL: () => false }));
 
 async function openCartWith(user, ...names) {
   for (const name of names) {

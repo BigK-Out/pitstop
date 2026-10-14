@@ -1,7 +1,9 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import App from "../../src/App";
+
+vi.mock("../../src/scene/webgl", () => ({ hasWebGL: () => false }));
 
 describe("App", () => {
   it("renders the page structure", () => {
