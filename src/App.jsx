@@ -3,6 +3,7 @@ import CartDrawer from "./cart/CartDrawer";
 import { CartProvider } from "./cart/CartContext";
 import CheckoutDialog from "./cart/CheckoutDialog";
 import { AnnouncerProvider } from "./components/Announcer";
+import ErrorBoundary from "./components/ErrorBoundary";
 import Faq from "./components/Faq";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
@@ -27,9 +28,11 @@ export default function App() {
           Skip to content
         </a>
         {showScene && (
-          <Suspense fallback={null}>
-            <Background />
-          </Suspense>
+          <ErrorBoundary fallback={null}>
+            <Suspense fallback={null}>
+              <Background />
+            </Suspense>
+          </ErrorBoundary>
         )}
         <Header onOpenCart={() => setCartOpen(true)} />
         <main id="main">

@@ -1,6 +1,7 @@
 import { Canvas } from "@react-three/fiber";
 import { DepthOfField, EffectComposer } from "@react-three/postprocessing";
-import { Component, Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
+import ErrorBoundary from "../components/ErrorBoundary";
 import Cherry from "./Cherry";
 import CherryModel from "./CherryModel";
 import ProceduralCherry from "./ProceduralCherry";
@@ -10,16 +11,6 @@ const DEPTH = 80;
 // Camera sits at z = 20 looking down -z; cherries span NEAR_Z to NEAR_Z - DEPTH.
 const NEAR_Z = 10;
 const SCENE_BG = "#ffc9b0";
-
-class ModelBoundary extends Component {
-  state = { failed: false };
-  static getDerivedStateFromError() {
-    return { failed: true };
-  }
-  render() {
-    return this.state.failed ? this.props.fallback : this.props.children;
-  }
-}
 
 function Cherries({ count, children }) {
   return Array.from({ length: count }, (_, i) => (
@@ -68,7 +59,7 @@ export default function Background() {
         <ambientLight intensity={1.5} />
         <directionalLight position={[10, 10, 10]} intensity={2.5} />
 
-        <ModelBoundary
+        <ErrorBoundary
           fallback={
             <Cherries count={tier.count}>
               <ProceduralCherry />
@@ -80,7 +71,7 @@ export default function Background() {
               <CherryModel />
             </Cherries>
           </Suspense>
-        </ModelBoundary>
+        </ErrorBoundary>
 
         {tier.depthOfField && (
           <EffectComposer>
