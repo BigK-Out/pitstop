@@ -1,8 +1,40 @@
 # Pitstop Cherries
 
-Landing page and demo shop for Pitstop, an invented dried-cherry snack brand. 3D cherries
-float behind the hero (React Three Fiber); the cart works and is saved in the browser, and
-checkout places a demo order. No payments, no backend.
+Landing page and demo shop for Pitstop, an invented dried-cherry snack brand. Scrolling
+through the hero splits a photoreal 3D cherry in half and lifts its pit out ("We took the
+pit out."). The bag works and is saved in the browser, and checkout places a demo order.
+No payments, no backend.
+
+**Live site:** https://bigk-out.github.io/pitstop/
+
+## Stack
+
+| Layer | What it uses |
+| ----- | ------------ |
+| UI | [React 18](https://react.dev) with plain CSS (custom properties, no CSS framework) |
+| Build | [Vite 5](https://vitejs.dev); a small build-time plugin (`build/seo.js`) adds meta tags and product JSON-LD |
+| 3D | [three.js 0.160](https://threejs.org) via [React Three Fiber 8](https://docs.pmnd.rs/react-three-fiber); the cherry is a glTF model split live with GPU clipping planes |
+| Scroll animation | A pinned (sticky) hero plus one pure timeline function, so there is no animation library |
+| Type | Fraunces and Inter, self-hosted with [Fontsource](https://fontsource.org) variable fonts |
+| State | React context and a reducer for the bag, persisted to `localStorage` and synced across tabs |
+| Testing | [Vitest](https://vitest.dev) and Testing Library (unit), [Playwright](https://playwright.dev) in Chrome (end-to-end) |
+| Quality | ESLint 9 (react, hooks, jsx-a11y) and Prettier 3 |
+| Hosting | GitHub Pages, deployed by GitHub Actions on every push to `main` |
+
+## Screenshots
+
+| Hero | Split | Reveal |
+| ---- | ----- | ------ |
+| ![Hero: a whole photoreal cherry beside the headline "Cherries, slowly sun-dried."](docs/screenshots/hero-start.jpg) | ![Mid-scroll: the cherry splits open and the pit appears](docs/screenshots/hero-split.jpg) | ![End of the hero: the halves apart, the pit lifted, "We took the pit out."](docs/screenshots/hero-reveal.jpg) |
+
+| Shop | Bag |
+| ---- | --- |
+| ![Shop: four numbered product plates with prices and Add to bag buttons](docs/screenshots/shop.jpg) | ![The bag drawer open with two pouches and a subtotal](docs/screenshots/bag.jpg) |
+
+<p>
+  <img src="docs/screenshots/mobile-start.jpg" alt="Phone: headline above a whole cherry" width="240">
+  <img src="docs/screenshots/mobile-reveal.jpg" alt="Phone: split cherry with the reveal line" width="240">
+</p>
 
 ## Run it
 
