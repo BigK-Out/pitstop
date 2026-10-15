@@ -24,17 +24,20 @@ checkout places a demo order. No payments, no backend.
 ## Editing the site
 
 - **Text, products, prices, links:** `src/content.js`. Prices are in cents.
-- **Colours and fonts:** variables at the top of `src/styles/global.css`.
+- **Colours and fonts:** tokens at the top of `src/styles/global.css` (Fraunces + Inter, self-hosted).
 - **Site URL** (used for search and share previews): `brand.siteUrl` in `src/content.js`.
 
-## 3D model
+## The Pit Stop hero
 
-Put a cherry model at `public/cherry.glb`. Any size or pivot works: it is scaled and centred
-automatically. Keep it under ~300 KB; up to 100 copies are drawn. Without the file, a
-built-in cherry shape is used.
+The hero is pinned for three screens of scrolling while a 3D cherry splits and its pit
+lifts out. Everything is built in code (no model files):
 
-To change how the scene behaves, see `src/scene/`: `Background.jsx` (camera, lights, blur,
-when it pauses), `Cherry.jsx` (motion), `sceneTier.js` (how many cherries per device).
+- `src/pitstop/timeline.js` — one function maps scroll progress (0–1) to every animated
+  value; change timings there.
+- `src/scene/heroGeometry.js` / `HeroCherry.jsx` — the cherry's shape, colours and motion.
+- `src/scene/Floaters.jsx` — the small background cherries; `sceneTier.js` sets how many.
+- `src/components/SplitCherryArt.jsx` — static image used for reduced motion, browsers
+  without WebGL, and while the 3D code loads.
 
 ## Deploying
 
