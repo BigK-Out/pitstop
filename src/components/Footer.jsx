@@ -14,13 +14,16 @@ export default function Footer() {
           ))}
         </ul>
         <p>This is a demo store: no real orders.</p>
-        <p>
-          © {new Date().getFullYear()} {brand.name}
-        </p>
       </div>
       <p className="footer-wordmark" aria-hidden="true">
         {brand.name}
       </p>
+      <div className="container footer-row footer-base">
+        <p>
+          © {new Date().getFullYear()} {brand.name}
+        </p>
+        <a href="#top">Back to top</a>
+      </div>
     </footer>
   );
 }

@@ -518,11 +518,16 @@
 }
 
 .footer-wordmark {
-  margin: 2rem 0 0;
-  font: 340 clamp(6rem, 24vw, 22rem) / 0.78 var(--font-display);
+  margin: clamp(1.5rem, 4vw, 3rem) 0 0;
+  padding-bottom: 0.3em;
+  font: 340 clamp(6rem, 24vw, 22rem) / 0.9 var(--font-display);
   letter-spacing: -0.05em;
   text-align: center;
-  transform: translateY(12%);
+}
+
+.footer-base {
+  padding-block: 1.25rem 1.5rem;
+  border-top: 1px solid rgb(244 237 227 / 0.2);
 }
 
 /* Dialogs */
