@@ -3,3 +3,6 @@ dist/
 test-results/
 playwright-report/
 .firecrawl/
+.superpowers/
+.lighthouse/
+.vscode/

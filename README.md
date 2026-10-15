@@ -1,210 +1,85 @@
-# Floating Bananas - React Three Fiber 3D Landing Page
+# Pitstop Cherries
 
-A modern 3D landing page built with React, Three.js, and React-Three-Fiber, featuring floating 3D models with depth-of-field effects.
+Landing page and demo shop for Pitstop, an invented dried-cherry snack brand. Scrolling
+through the hero splits a photoreal 3D cherry in half and lifts its pit out ("We took the
+pit out."). The bag works and is saved in the browser, and checkout places a demo order.
+No payments, no backend.
 
-## 🚀 Quick Start
+**Live site:** https://bigk-out.github.io/pitstop/
 
-### Prerequisites
-- Node.js 16+ and npm
+## Stack
 
-### Installation
+| Layer | What it uses |
+| ----- | ------------ |
+| UI | [React 18](https://react.dev) with plain CSS (custom properties, no CSS framework) |
+| Build | [Vite 5](https://vitejs.dev); a small build-time plugin (`build/seo.js`) adds meta tags and product JSON-LD |
+| 3D | [three.js 0.160](https://threejs.org) via [React Three Fiber 8](https://docs.pmnd.rs/react-three-fiber); the cherry is a glTF model split live with GPU clipping planes |
+| Scroll animation | A pinned (sticky) hero plus one pure timeline function, so there is no animation library |
+| Type | Fraunces and Inter, self-hosted with [Fontsource](https://fontsource.org) variable fonts |
+| State | React context and a reducer for the bag, persisted to `localStorage` and synced across tabs |
+| Testing | [Vitest](https://vitest.dev) and Testing Library (unit), [Playwright](https://playwright.dev) in Chrome (end-to-end) |
+| Quality | ESLint 9 (react, hooks, jsx-a11y) and Prettier 3 |
+| Hosting | GitHub Pages, deployed by GitHub Actions on every push to `main` |
 
-```bash
-# Install dependencies
-npm install
+## Screenshots
 
-# Start development server
-npm run dev
+| Hero | Split | Reveal |
+| ---- | ----- | ------ |
+| ![Hero: a whole photoreal cherry beside the headline "Cherries, slowly sun-dried."](docs/screenshots/hero-start.jpg) | ![Mid-scroll: the cherry splits open and the pit appears](docs/screenshots/hero-split.jpg) | ![End of the hero: the halves apart, the pit lifted, "We took the pit out."](docs/screenshots/hero-reveal.jpg) |
 
-# Build for production
-npm run build
-```
+| Shop | Bag |
+| ---- | --- |
+| ![Shop: four numbered product plates with prices and Add to bag buttons](docs/screenshots/shop.jpg) | ![The bag drawer open with two pouches and a subtotal](docs/screenshots/bag.jpg) |
 
-The dev server will open at `http://localhost:5173`
+<p>
+  <img src="docs/screenshots/mobile-start.jpg" alt="Phone: headline above a whole cherry" width="240">
+  <img src="docs/screenshots/mobile-reveal.jpg" alt="Phone: split cherry with the reveal line" width="240">
+</p>
 
-## 📁 Project Structure
+## Run it
 
-```
-.
-├── index.html           # HTML entry point
-├── vite.config.js       # Vite configuration
-├── package.json         # Dependencies
-├── src/
-│   ├── main.jsx         # React entry point
-│   ├── App.jsx          # Main component with Canvas setup
-│   ├── Banana.jsx       # Individual banana component with animation
-│   ├── App.css          # Component styles
-│   └── index.css        # Global styles
-└── public/
-    └── banana.glb       # 3D model (add your optimized model here)
-```
+    npm install
+    npm run dev        # http://localhost:5173, opens in Chrome
 
-Until `public/banana.glb` exists, each banana renders as a yellow capsule placeholder
-(the console will show "Could not load /banana.glb" errors — expected).
+## Scripts
 
-## 🎨 Key Features
+| Command            | What it does                                   |
+| ------------------ | ---------------------------------------------- |
+| `npm run dev`      | Dev server with hot reload                     |
+| `npm run build`    | Production build into `dist/`                  |
+| `npm run preview`  | Serve the production build locally             |
+| `npm test`         | Unit tests (Vitest)                            |
+| `npm run test:e2e` | End-to-end tests in Chrome (Playwright)        |
+| `npm run lint`     | ESLint + Prettier check                        |
+| `npm run format`   | Format all files with Prettier                 |
 
-### 1. **Component-Based 3D**
-- Declarative React components for 3D objects
-- Reusable Banana component mounted multiple times
-- Clean separation of concerns
+## Editing the site
 
-### 2. **Animation System**
-- `useFrame` hook for 60fps animations
-- Smooth upward motion with wrap-around
-- Individual rotation on x, y, z axes
-- Frame-rate independent spin (speeds are in radians per second)
+- **Text, products, prices, links:** `src/content.js`. Prices are in cents.
+- **Colours and fonts:** tokens at the top of `src/styles/global.css` (Fraunces + Inter, self-hosted).
+- **Site URL** (used for search and share previews): `brand.siteUrl` in `src/content.js`.
 
-### 3. **Depth Effects**
-- Depth of Field (DoF) post-processing
-- Focus target positioned at the middle of the banana field
-- Variable focal length for blur intensity
-- Bokeh scaling for visual polish
+## The Pit Stop hero
 
-### 4. **Performance Optimization**
-- Vite for fast builds
-- Suspense boundary for async model loading
-- Viewport-aware positioning
-- Optimized glTF/GLB models with Draco compression
+The hero is pinned for three screens of scrolling while a 3D cherry splits and its pit
+lifts out. The cherry is the photoreal model in `public/cherry.glb` (225 KB, WebP
+textures); it is cut in half live with GPU clipping planes:
 
-## 🛠️ Configuration
+- `src/pitstop/timeline.js` — one function maps scroll progress (0–1) to every animated
+  value; change timings there.
+- `src/scene/cherryModel.js` — model URL, how the model is centred and scaled, and where
+  the cut is. If you swap in a different model, re-measure these numbers.
+- `src/scene/HeroCherry.jsx` / `heroGeometry.js` — the two clipped halves, the cut faces,
+  the pit, and the motion.
+- `src/scene/Floaters.jsx` — the small background cherries (same model); `sceneTier.js`
+  sets how many.
+- `src/components/SplitCherryArt.jsx` — static image used for reduced motion, browsers
+  without WebGL, and while the 3D code loads.
 
-### Canvas Setup (App.jsx)
-```javascript
-<Canvas
-  camera={{ position: [0, 0, 20], fov: 30, near: 0.1, far: 110 }}
-  gl={{ alpha: false }}
->
-```
+The 3D scene mounts once the browser is idle, so static art shows first and first paint is
+never blocked. Software WebGL renderers (detected in `webgl.js`) get a lighter tier from
+`sceneTier.js` that renders on scroll instead of continuously.
 
-### Key Parameters to Tweak
+## Deploying
 
-| Parameter | File | Effect |
-|-----------|------|--------|
-| `count` | src/App.jsx | Number of floating objects |
-| `depth` | src/App.jsx | Distance range for objects (z-axis) |
-| `fov` | src/App.jsx | Camera field of view (zoom level) |
-| `target` | src/App.jsx | World point the depth-of-field effect focuses on |
-| `bokehScale` | src/App.jsx | Intensity of blur effect |
-| Rotation speeds | src/Banana.jsx (radians/second) | How fast objects spin |
-| Motion speed | src/Banana.jsx (clock.elapsedTime × multiplier) | Vertical floating speed |
-
-## 📦 Model Setup
-
-### Using Your Own 3D Model
-
-1. **Find/Create Model**
-   - Download from Sketchfab.com (select downloadable, glTF format)
-   - Ensure it's production-ready
-
-2. **Optimize in Blender**
-   ```
-   - Open in Blender
-   - Merge meshes: Select → Menu: Mesh → Join
-   - Decimate modifier: Reduce poly count by 50-80%
-   - Set origin to center: Object → Set Origin → Origin to Center of Mass
-   - Export as GLB (File → Export → glTF)
-   ```
-
-3. **Further Compression**
-   - Use gltf.report or gltfpack
-   - Target: <300KB for web
-   - Apply Draco compression
-
-4. **Place Model**
-   ```bash
-   # Copy to public folder
-   cp your-model.glb public/banana.glb
-   ```
-
-5. **Convert to React Component (Optional)**
-   ```bash
-   npx gltf-jsx public/banana.glb
-   ```
-   This creates a declarative React component for easier manipulation.
-   Not required: `Banana.jsx` uses the first mesh it finds in the model, whatever it is named.
-
-## 🎯 Animation Concepts
-
-### useFrame Hook
-```javascript
-useFrame(({ clock }) => {
-  const t = clock.elapsedTime; // Continuously increasing value
-  ref.current.position.y = startY + Math.sin(t) * amplitude;
-});
-```
-
-### Smooth Tweening with lerp
-```javascript
-// Smooth movement from A to B
-ref.current.position.y = THREE.MathUtils.lerp(
-  current,
-  target,
-  friction // 0.1 for slow damping, higher = faster
-);
-```
-
-### Randomization
-```javascript
-// Random value between -range and +range
-THREE.MathUtils.randFloatSpread(range)
-
-// Random rotation (0 to 2π)
-Math.random() * Math.PI * 2
-```
-
-## 📊 Performance Tips
-
-1. **Reduce Draw Calls**
-   - Batch objects with InstancedMesh
-   - Use LOD (Level of Detail) for distant objects
-
-2. **Optimize Textures**
-   - Use KTX2 or Basis compression
-   - Resize large textures for mobile
-
-3. **Lazy Load Assets**
-   - Use Suspense boundary
-   - Load models only when needed
-
-4. **Render Optimization**
-   - Pause rendering when off-screen (IntersectionObserver)
-   - Render on demand instead of every frame
-
-## 🐛 Troubleshooting
-
-### Model not showing
-- Verify path in useGLTF: `/banana.glb` (starts with `/`)
-- Check public folder structure
-- Ensure Suspense boundary wraps Scene
-
-### DoF effect not working
-- Set `gl={{ alpha: false }}` on Canvas
-- Check clipping planes: `near: 0.1, far: 110` (far must reach the farthest banana)
-- `target` is a world position; keep it inside the banana field
-
-### Performance issues
-- Reduce `count` value
-- Lower `bokehScale` or remove post-processing
-- Check model file size and complexity
-
-## 🔗 Resources
-
-- [Three.js Docs](https://threejs.org/docs/)
-- [React-Three-Fiber](https://docs.pmnd.rs/react-three-fiber/)
-- [Drei (R3F Helpers)](https://github.com/pmndrs/drei)
-- [Blender Learning](https://www.blender.org/support/tutorials/)
-- [Sketchfab 3D Models](https://sketchfab.com/)
-
-## 📝 Notes from Tutorial
-
-- Everything in Canvas is **loop-based** (60fps), not event-based
-- All objects are centered by default in 3D space
-- Position uses `[x, y, z]` where x=horizontal, y=vertical, z=depth
-- Sine functions oscillate between -1 and 1 (perfect for bobbing)
-- Multiply by `elapsed time` to control animation speed
-- Multiply per-frame increments by `delta` so speed doesn't depend on screen refresh rate
-- `Suspense` boundary required for async asset loading
-- Model optimization is critical: aim for <300KB per model
-
-Enjoy your fancy 3D landing page! 🚀
+See `SETUP_GUIDE.md`.
