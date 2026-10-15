@@ -1,7 +1,7 @@
 import { useFrame, useThree } from "@react-three/fiber";
 import { useMemo, useRef } from "react";
 import * as THREE from "three";
-import ProceduralCherry from "./ProceduralCherry";
+import { useCherryModel } from "./useCherryModel";
 
 const rand = (min, max) => min + Math.random() * (max - min);
 const TAN = Math.tan(THREE.MathUtils.degToRad(15)); // camera fov 30 at distance 12 - z
@@ -14,10 +14,11 @@ const bandFade = (ny) => smoothstep(ny, -0.55, -0.3);
 // Portrait frames put the copy in the top ~45%, so floaters fade out there too.
 const topFade = (ny) => 1 - smoothstep(ny, 0.1, 0.35);
 
-// Small cherries drifting upward behind the hero cherry; fog fades the distant ones.
+// Small cherries (the same model as the hero) drifting upward behind the hero cherry; fog fades the distant ones.
 // Positions are stored in screen-normalised units so any aspect ratio gets the same spread.
 export default function Floaters({ count, animate }) {
   const refs = useRef([]);
+  const { geometry, material } = useCherryModel();
   const aspect = useThree((state) => state.viewport.aspect);
   const wide = aspect >= 1.3;
   const items = useMemo(
@@ -56,7 +57,7 @@ export default function Floaters({ count, animate }) {
 
   return items.map((item, i) => (
     <group key={i} ref={(el) => (refs.current[i] = el)} rotation={item.rotation} scale={0}>
-      <ProceduralCherry />
+      <mesh geometry={geometry} material={material} />
     </group>
   ));
 }

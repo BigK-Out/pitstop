@@ -79,6 +79,8 @@
 .pitstop {
   position: relative;
   height: 300vh;
+  /* Start under the translucent sticky header so the stage always fills the window. */
+  margin-top: calc(-1 * var(--header-h));
 }
 
 .pitstop-stage {

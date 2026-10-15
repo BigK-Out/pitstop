@@ -1,6 +1,15 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { createCherryGeometry } from "../../src/scene/cherryGeometry";
-import { createHeroCherryParts } from "../../src/scene/heroGeometry";
+import * as THREE from "three";
+import {
+  CUT_RY,
+  CUT_RZ,
+  FRUIT_CENTER,
+  FRUIT_SCALE,
+  SPLIT_X,
+  halfClipPlanes,
+  normalizeFruit,
+} from "../../src/scene/cherryModel";
+import { createCutParts } from "../../src/scene/heroGeometry";
 import { pickTier } from "../../src/scene/sceneTier";
 import { isSoftwareRenderer } from "../../src/scene/webgl";
 
@@ -65,54 +74,61 @@ describe("isSoftwareRenderer", () => {
   });
 });
 
-describe("createCherryGeometry", () => {
-  it("builds one centred geometry with vertex colours", () => {
-    const geometry = createCherryGeometry();
-    expect(geometry.getAttribute("color").count).toBe(geometry.getAttribute("position").count);
-    geometry.computeBoundingBox();
-    const center = geometry.boundingBox.getCenter(geometry.boundingBox.min.clone());
+describe("normalizeFruit", () => {
+  it("centres the fruit body on the origin and scales it, leaving the source untouched", () => {
+    const source = new THREE.BoxGeometry(1, 1, 1).translate(...FRUIT_CENTER);
+    const fruit = normalizeFruit(source);
+    fruit.computeBoundingBox();
+    const center = fruit.boundingBox.getCenter(new THREE.Vector3());
+    const size = fruit.boundingBox.getSize(new THREE.Vector3());
     expect(center.length()).toBeLessThan(1e-6);
+    expect(size.x).toBeCloseTo(FRUIT_SCALE);
+    source.computeBoundingBox();
+    expect(source.boundingBox.getCenter(new THREE.Vector3()).y).toBeCloseTo(FRUIT_CENTER[1]);
   });
 });
 
-describe("createHeroCherryParts", () => {
-  const parts = createHeroCherryParts();
+describe("halfClipPlanes", () => {
+  const { left, right } = halfClipPlanes();
+  const at = (x) => new THREE.Vector3(x, 0.3, -0.2);
 
-  it("uses a physical skin by default and a cheaper one when lite", () => {
-    expect(parts.skin.isMeshPhysicalMaterial).toBe(true);
-    expect(createHeroCherryParts({ lite: true }).skin.isMeshPhysicalMaterial).toBeFalsy();
+  it("keeps x ≤ SPLIT_X on the left half and x ≥ SPLIT_X on the right half", () => {
+    // three.js clips points whose signed distance is negative.
+    expect(left.distanceToPoint(at(SPLIT_X - 0.5))).toBeGreaterThan(0);
+    expect(left.distanceToPoint(at(SPLIT_X + 0.5))).toBeLessThan(0);
+    expect(right.distanceToPoint(at(SPLIT_X + 0.5))).toBeGreaterThan(0);
+    expect(right.distanceToPoint(at(SPLIT_X - 0.5))).toBeLessThan(0);
+    expect(left.distanceToPoint(at(SPLIT_X))).toBeCloseTo(0);
+  });
+});
+
+describe("createCutParts", () => {
+  const parts = createCutParts();
+
+  it("places both cut faces on the split plane, facing outward along x", () => {
+    for (const [key, sign] of [
+      ["leftFace", 1],
+      ["rightFace", -1],
+    ]) {
+      const face = parts[key];
+      face.computeBoundingBox();
+      expect(face.boundingBox.min.x, key).toBeCloseTo(SPLIT_X);
+      expect(face.boundingBox.max.x, key).toBeCloseTo(SPLIT_X);
+      expect(face.getAttribute("normal").getX(0), key).toBeCloseTo(sign);
+    }
   });
 
-  it("builds every geometry and material", () => {
-    for (const key of [
-      "leftSkin",
-      "rightSkin",
-      "leftFace",
-      "rightFace",
-      "leftHollow",
-      "rightHollow",
-      "pit",
-      "stem",
-      "leaf",
-    ]) {
-      expect(parts[key].getAttribute("position").count, key).toBeGreaterThan(0);
-    }
-    for (const key of ["skin", "flesh", "hollow", "pitMat", "stemMat", "leafMat"]) {
+  it("sizes the faces to the fruit's cross-section", () => {
+    parts.leftFace.computeBoundingBox();
+    const size = parts.leftFace.boundingBox.getSize(new THREE.Vector3());
+    expect(size.y).toBeCloseTo(2 * CUT_RY, 2);
+    expect(size.z).toBeCloseTo(2 * CUT_RZ, 2);
+  });
+
+  it("builds the pit and every material", () => {
+    expect(parts.pit.getAttribute("position").count).toBeGreaterThan(0);
+    for (const key of ["flesh", "hollow", "pitMat"]) {
       expect(parts[key].isMaterial, key).toBe(true);
     }
-  });
-
-  it("splits the skin on the vertical plane: left half x ≤ 0, right half x ≥ 0", () => {
-    parts.leftSkin.computeBoundingBox();
-    parts.rightSkin.computeBoundingBox();
-    expect(parts.leftSkin.boundingBox.max.x).toBeLessThan(1e-6);
-    expect(parts.rightSkin.boundingBox.min.x).toBeGreaterThan(-1e-6);
-  });
-
-  it("faces the cut surfaces outward along x", () => {
-    const leftNormal = parts.leftFace.getAttribute("normal");
-    const rightNormal = parts.rightFace.getAttribute("normal");
-    expect(leftNormal.getX(0)).toBeCloseTo(1);
-    expect(rightNormal.getX(0)).toBeCloseTo(-1);
   });
 });

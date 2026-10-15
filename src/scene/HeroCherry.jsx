@@ -2,26 +2,57 @@ import { useFrame, useThree } from "@react-three/fiber";
 import { useMemo, useRef } from "react";
 import * as THREE from "three";
 import { pitStopTimeline } from "../pitstop/timeline";
-import { createHeroCherryParts } from "./heroGeometry";
+import { SPLIT_X, halfClipPlanes } from "./cherryModel";
+import { createCutParts } from "./heroGeometry";
+import { useCherryModel } from "./useCherryModel";
 
 const { lerp } = THREE.MathUtils;
 // Halves open toward the camera by this much at full split so the cut faces are visible.
 const OPEN = 0.7;
 
-export default function HeroCherry({ progressRef, animate, lite = false }) {
+// Each half renders the whole model with its own clipping plane, which follows the half as it moves.
+function useClippedHalf(material, localPlane) {
+  return useMemo(() => {
+    const world = localPlane.clone();
+    const halfMaterial = material.clone();
+    halfMaterial.clippingPlanes = [world];
+    return { local: localPlane, world, material: halfMaterial };
+  }, [material, localPlane]);
+}
+
+export default function HeroCherry({ progressRef, animate }) {
   const root = useRef();
   const left = useRef();
   const right = useRef();
   const pit = useRef();
-  const parts = useMemo(() => createHeroCherryParts({ lite }), [lite]);
+  const leftCut = useRef();
+  const rightCut = useRef();
+  const { geometry, material } = useCherryModel();
+  const cut = useMemo(createCutParts, []);
+  const planes = useMemo(() => halfClipPlanes(), []);
+  const leftHalf = useClippedHalf(material, planes.left);
+  const rightHalf = useClippedHalf(material, planes.right);
   const viewport = useThree((state) => state.viewport);
+  const size = useThree((state) => state.size);
   // Side-by-side only on landscape screens; otherwise the cherry is centred and sized to fit.
   const wide = viewport.aspect >= 1.3;
   const halfW = viewport.width / 2;
-  // Portrait tablets have the intro copy lower down, so the cherry starts further down and smaller.
-  const tablet = viewport.aspect > 0.6;
-  const startY = tablet ? -1.3 : -1.4;
-  const startScale = tablet ? 0.8 : Math.min(1, halfW * 0.54);
+  // Stacked layouts: fit the whole cherry (stem tip to body bottom ≈ 3.4 units at scale 1)
+  // into the space below the intro copy, measured from the page so any phone height works.
+  const { startY, startScale } = useMemo(() => {
+    const introBottom =
+      document.querySelector(".pitstop-intro")?.getBoundingClientRect().bottom ??
+      size.height * 0.55;
+    const freeUnits = Math.max(
+      0,
+      ((size.height - introBottom - 16) / size.height) * viewport.height,
+    );
+    const scale = Math.max(
+      0.35,
+      Math.min(viewport.aspect > 0.6 ? 0.8 : 1, halfW * 0.54, (freeUnits - 0.2) / 3.4),
+    );
+    return { startScale: scale, startY: -viewport.height / 2 + 0.2 + 0.9 * scale };
+  }, [size.height, viewport.height, viewport.aspect, halfW]);
 
   useFrame(({ clock }) => {
     const t = pitStopTimeline(progressRef.current);
@@ -42,25 +73,34 @@ export default function HeroCherry({ progressRef, animate, lite = false }) {
     right.current.position.x = 1.1 * t.split;
     right.current.rotation.set(0, OPEN * t.split, -0.45 * t.split);
 
-    pit.current.position.y = 1.5 * t.pitLift;
+    pit.current.position.set(SPLIT_X, 1.5 * t.pitLift, 0);
+    // The cut faces only exist once the cherry opens; while whole they would poke through the skin.
+    leftCut.current.visible = rightCut.current.visible = t.split > 0.01;
     pit.current.rotation.y = Math.PI * t.pitLift;
+
+    // Clipping planes live in world space: move them with their halves.
+    root.current.updateMatrixWorld();
+    leftHalf.world.copy(leftHalf.local).applyMatrix4(left.current.matrixWorld);
+    rightHalf.world.copy(rightHalf.local).applyMatrix4(right.current.matrixWorld);
   });
 
   return (
     <group ref={root}>
       <group ref={left}>
-        <mesh geometry={parts.leftSkin} material={parts.skin} />
-        <mesh geometry={parts.leftFace} material={parts.flesh} />
-        <mesh geometry={parts.leftHollow} material={parts.hollow} />
-        <mesh geometry={parts.stem} material={parts.stemMat} />
-        <mesh geometry={parts.leaf} material={parts.leafMat} />
+        <mesh geometry={geometry} material={leftHalf.material} />
+        <group ref={leftCut}>
+          <mesh geometry={cut.leftFace} material={cut.flesh} />
+          <mesh geometry={cut.leftHollow} material={cut.hollow} />
+        </group>
       </group>
       <group ref={right}>
-        <mesh geometry={parts.rightSkin} material={parts.skin} />
-        <mesh geometry={parts.rightFace} material={parts.flesh} />
-        <mesh geometry={parts.rightHollow} material={parts.hollow} />
+        <mesh geometry={geometry} material={rightHalf.material} />
+        <group ref={rightCut}>
+          <mesh geometry={cut.rightFace} material={cut.flesh} />
+          <mesh geometry={cut.rightHollow} material={cut.hollow} />
+        </group>
       </group>
-      <mesh ref={pit} geometry={parts.pit} material={parts.pitMat} />
+      <mesh ref={pit} geometry={cut.pit} material={cut.pitMat} />
     </group>
   );
 }

@@ -30,12 +30,17 @@ checkout places a demo order. No payments, no backend.
 ## The Pit Stop hero
 
 The hero is pinned for three screens of scrolling while a 3D cherry splits and its pit
-lifts out. Everything is built in code (no model files):
+lifts out. The cherry is the photoreal model in `public/cherry.glb` (225 KB, WebP
+textures); it is cut in half live with GPU clipping planes:
 
 - `src/pitstop/timeline.js` — one function maps scroll progress (0–1) to every animated
   value; change timings there.
-- `src/scene/heroGeometry.js` / `HeroCherry.jsx` — the cherry's shape, colours and motion.
-- `src/scene/Floaters.jsx` — the small background cherries; `sceneTier.js` sets how many.
+- `src/scene/cherryModel.js` — model URL, how the model is centred and scaled, and where
+  the cut is. If you swap in a different model, re-measure these numbers.
+- `src/scene/HeroCherry.jsx` / `heroGeometry.js` — the two clipped halves, the cut faces,
+  the pit, and the motion.
+- `src/scene/Floaters.jsx` — the small background cherries (same model); `sceneTier.js`
+  sets how many.
 - `src/components/SplitCherryArt.jsx` — static image used for reduced motion, browsers
   without WebGL, and while the 3D code loads.
 

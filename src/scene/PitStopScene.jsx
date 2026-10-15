@@ -74,6 +74,10 @@ export default function PitStopScene({ progressRef }) {
       dpr={tier.dpr}
       camera={{ position: [0, 0, 12], fov: 30, near: 0.1, far: 60 }}
       gl={{ antialias: true, alpha: false }}
+      onCreated={({ gl }) => {
+        // The hero cherry is split with per-material clipping planes.
+        gl.localClippingEnabled = true;
+      }}
     >
       <color attach="background" args={[PAPER]} />
       <fog attach="fog" args={[PAPER, 10, 30]} />
@@ -82,7 +86,7 @@ export default function PitStopScene({ progressRef }) {
       <directionalLight position={[5, -2, -6]} intensity={1.2} color="#ffd6e0" />
       {!tier.animate && <InvalidateOnScroll />}
       {tier.animate && <StudioEnvironment />}
-      <HeroCherry progressRef={progressRef} animate={tier.animate} lite={!tier.animate} />
+      <HeroCherry progressRef={progressRef} animate={tier.animate} />
       <Floaters count={tier.floaters} animate={tier.animate} />
     </Canvas>
   );

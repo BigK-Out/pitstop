@@ -1,52 +1,27 @@
 import * as THREE from "three";
+import { CUT_RY, CUT_RZ, SPLIT_X } from "./cherryModel";
 
-const v = (x, y, z) => new THREE.Vector3(x, y, z);
-const SQUASH = 0.92;
+// A flat ellipse in the YZ plane at x = offsetX. rotateY(+π/2) faces +x, rotateY(-π/2) faces -x.
+const cut = (rz, ry, angle, offsetX) =>
+  new THREE.CircleGeometry(1, 64).scale(rz, ry, 1).rotateY(angle).translate(offsetX, 0, 0);
 
-// SphereGeometry's phi runs around Y with x = -cos(phi): phi in [-π/2, π/2] is the x ≤ 0 half.
-const skinHalf = (phiStart) =>
-  new THREE.SphereGeometry(1, 64, 48, phiStart, Math.PI).scale(1, SQUASH, 1);
-
-// A disc in the YZ plane; rotateY(+π/2) faces +x, rotateY(-π/2) faces -x.
-const disc = (radius, yScale, angle, offsetX) =>
-  new THREE.CircleGeometry(radius, 64).scale(1, yScale, 1).rotateY(angle).translate(offsetX, 0, 0);
-
-// Geometries and materials for the splitting hero cherry. Built once per scene.
-export function createHeroCherryParts({ lite = false } = {}) {
+// The inside of the split cherry: cut faces, the hollow left by the pit, and the pit itself.
+// The skin is the cherry model, clipped into two halves in HeroCherry.
+export function createCutParts() {
   return {
-    leftSkin: skinHalf(-Math.PI / 2),
-    rightSkin: skinHalf(Math.PI / 2),
-    leftFace: disc(1, SQUASH, Math.PI / 2, 0),
-    rightFace: disc(1, SQUASH, -Math.PI / 2, 0),
-    leftHollow: disc(0.42, 1.3, Math.PI / 2, 0.004),
-    rightHollow: disc(0.42, 1.3, -Math.PI / 2, -0.004),
+    leftFace: cut(CUT_RZ, CUT_RY, Math.PI / 2, SPLIT_X),
+    rightFace: cut(CUT_RZ, CUT_RY, -Math.PI / 2, SPLIT_X),
+    leftHollow: cut(CUT_RZ * 0.42, CUT_RY * 0.55, Math.PI / 2, SPLIT_X + 0.004),
+    rightHollow: cut(CUT_RZ * 0.42, CUT_RY * 0.55, -Math.PI / 2, SPLIT_X - 0.004),
     pit: new THREE.SphereGeometry(1, 32, 24).scale(0.36, 0.48, 0.36),
-    stem: new THREE.TubeGeometry(
-      new THREE.QuadraticBezierCurve3(v(0, 0.8, 0), v(0.05, 1.5, 0), v(0.3, 2.05, 0)),
-      24,
-      0.04,
-      8,
-    ),
-    leaf: new THREE.SphereGeometry(0.32, 16, 12)
-      .scale(1, 0.14, 0.5)
-      .rotateZ(-0.5)
-      .translate(0.62, 2.05, 0),
-    skin: lite
-      ? new THREE.MeshStandardMaterial({ color: "#c3142f", roughness: 0.3, metalness: 0 })
-      : new THREE.MeshPhysicalMaterial({
-          color: "#c3142f",
-          roughness: 0.28,
-          clearcoat: 1,
-          clearcoatRoughness: 0.15,
-        }),
     flesh: new THREE.MeshStandardMaterial({
-      color: "#7a0b1f",
+      color: "#7e1022",
       roughness: 0.8,
       envMapIntensity: 0.25,
       side: THREE.DoubleSide,
     }),
     hollow: new THREE.MeshStandardMaterial({
-      color: "#4a0a14",
+      color: "#3a0610",
       roughness: 0.9,
       envMapIntensity: 0.2,
       side: THREE.DoubleSide,
@@ -55,12 +30,6 @@ export function createHeroCherryParts({ lite = false } = {}) {
       color: "#a8804f",
       roughness: 0.75,
       envMapIntensity: 0.4,
-    }),
-    stemMat: new THREE.MeshStandardMaterial({ color: "#6b8f3a", roughness: 0.7 }),
-    leafMat: new THREE.MeshStandardMaterial({
-      color: "#7cb553",
-      roughness: 0.6,
-      side: THREE.DoubleSide,
     }),
   };
 }
