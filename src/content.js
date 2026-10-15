@@ -10,7 +10,7 @@ export const brand = {
   siteUrl: "https://bigk-out.github.io/pitstop/",
   hero: {
     label: "Batch Nº 07 — Montmorency, 2026",
-    headline: [{ text: "Cherries, " }, { em: "slowly" }, { text: " sun-dried." }],
+    headline: [{ text: "Cherries, " }, { em: "slowly" }, { text: " " }, { nowrap: "sun-dried." }],
     primaryCta: "Shop the harvest",
     secondaryCta: "Our orchard",
     reveal: [{ text: "We took the " }, { em: "pit" }, { text: " out." }],

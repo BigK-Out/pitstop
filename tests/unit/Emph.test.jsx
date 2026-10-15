@@ -12,4 +12,15 @@ describe("Emph", () => {
     expect(container.textContent).toBe("We took the pit out.");
     expect(container.querySelector("em").textContent).toBe("pit");
   });
+
+  it("renders nowrap segments in a non-breaking span", () => {
+    const { container } = render(
+      <p>
+        <Emph parts={[{ text: "Cherries " }, { nowrap: "sun-dried." }]} />
+      </p>,
+    );
+    expect(container.textContent).toBe("Cherries sun-dried.");
+    const span = container.querySelector("span.nowrap");
+    expect(span.textContent).toBe("sun-dried.");
+  });
 });

@@ -19,6 +19,7 @@ export function useScrollProgress(ref, enabled) {
       el.style.setProperty("--intro-shift", `${t.introShift}px`);
       el.style.setProperty("--reveal-opacity", String(t.revealOpacity));
       el.toggleAttribute("data-revealed", t.revealVisible);
+      el.toggleAttribute("data-intro-gone", t.introOpacity === 0);
     };
 
     if (!enabled) {

@@ -145,6 +145,10 @@
   visibility: visible;
 }
 
+.pitstop:not(.pitstop--static)[data-intro-gone] .pitstop-intro {
+  visibility: hidden;
+}
+
 .pitstop-reveal-line {
   margin: 0;
   font: 340 clamp(2.25rem, 5vw, 4.5rem) / 1 var(--font-display);
@@ -163,6 +167,7 @@
 .pitstop--static .pitstop-intro {
   top: calc(var(--header-h) + 8svh);
   opacity: 1;
+  visibility: visible;
   transform: none;
 }
 
@@ -194,6 +199,39 @@
 
   .pitstop-reveal {
     bottom: 6svh;
+  }
+}
+
+/* Static mode on phones: stack intro, art and reveal in flow so they can never overlap. */
+@media (max-width: 767px) {
+  .pitstop--static .pitstop-stage {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    min-height: 0;
+    padding: calc(var(--header-h) + 2.5rem) var(--gutter) 3rem;
+  }
+
+  .pitstop--static .pitstop-canvas,
+  .pitstop--static .pitstop-intro,
+  .pitstop--static .pitstop-reveal {
+    position: static;
+    padding: 0;
+  }
+
+  .pitstop--static .pitstop-canvas {
+    order: 2;
+  }
+
+  .pitstop--static .pitstop-art {
+    position: static;
+    width: min(72vw, 320px);
+    margin-inline: auto;
+    transform: none;
+  }
+
+  .pitstop--static .pitstop-reveal {
+    order: 3;
   }
 }
 

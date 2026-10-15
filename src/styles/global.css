@@ -124,6 +124,10 @@ a {
   text-transform: uppercase;
 }
 
+.nowrap {
+  white-space: nowrap;
+}
+
 .button {
   display: inline-flex;
   align-items: center;

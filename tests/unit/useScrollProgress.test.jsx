@@ -24,6 +24,7 @@ describe("useScrollProgress", () => {
     const hero = screen.getByTestId("hero");
     expect(out.current.current).toBe(1);
     expect(hero).toHaveAttribute("data-revealed");
+    expect(hero).toHaveAttribute("data-intro-gone");
     expect(hero.style.getPropertyValue("--reveal-opacity")).toBe("1");
     expect(hero.style.getPropertyValue("--intro-opacity")).toBe("0");
     expect(hero.style.getPropertyValue("--intro-shift")).toBe("40px");
@@ -36,6 +37,7 @@ describe("useScrollProgress", () => {
     const hero = screen.getByTestId("hero");
     expect(hero.style.getPropertyValue("--intro-opacity")).toBe("1");
     expect(hero).not.toHaveAttribute("data-revealed");
+    expect(hero).not.toHaveAttribute("data-intro-gone");
 
     rect.mockReturnValue({ top: -1500, height: 3000 }); // p = 0.75
     window.dispatchEvent(new Event("scroll"));
