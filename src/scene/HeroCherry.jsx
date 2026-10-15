@@ -14,20 +14,28 @@ export default function HeroCherry({ progressRef, animate }) {
   const right = useRef();
   const pit = useRef();
   const parts = useMemo(createHeroCherryParts, []);
-  const wide = useThree((state) => state.size.width >= 768);
+  const viewport = useThree((state) => state.viewport);
+  // Side-by-side only on landscape screens; otherwise the cherry is centred and sized to fit.
+  const wide = viewport.aspect >= 1.3;
+  const halfW = viewport.width / 2;
+  // Portrait tablets have the intro copy lower down, so the cherry starts further down and smaller.
+  const tablet = viewport.aspect > 0.6;
+  const startY = tablet ? -2 : -1.4;
+  const startScale = tablet ? 0.85 : Math.min(1, halfW * 0.54);
 
   useFrame(({ clock }) => {
     const t = pitStopTimeline(progressRef.current);
     const sway = animate ? Math.sin(clock.elapsedTime * 0.6) * 0.08 : 0;
 
     root.current.position.set(
-      wide ? lerp(2.4, 0, t.travel) : 0,
-      wide ? 0 : lerp(-1.4, -0.3, t.travel),
+      wide ? lerp(Math.min(2.4, halfW - 1.3), 0, t.travel) : 0,
+      wide ? 0 : lerp(startY, -0.3, t.travel),
       0,
     );
     root.current.rotation.y = t.turn + sway;
-    // On phones the halves would leave the frame, so the cherry shrinks as it splits.
-    root.current.scale.setScalar(wide ? t.scale : lerp(0.8, 0.52, t.split));
+    // Narrow frames shrink the cherry as it splits so the halves (about ±2.1 units) stay inside.
+    const fitted = lerp(startScale, Math.min(1.15, (halfW * 0.8) / 2.1), t.split);
+    root.current.scale.setScalar(wide ? t.scale : fitted);
 
     left.current.position.x = -1.1 * t.split;
     left.current.rotation.set(0, -OPEN * t.split, 0.45 * t.split);

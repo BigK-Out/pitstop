@@ -20,7 +20,7 @@ export function createHeroCherryParts() {
     rightFace: disc(1, SQUASH, -Math.PI / 2, 0),
     leftHollow: disc(0.42, 1.3, Math.PI / 2, 0.004),
     rightHollow: disc(0.42, 1.3, -Math.PI / 2, -0.004),
-    pit: new THREE.SphereGeometry(1, 32, 24).scale(0.42, 0.55, 0.42),
+    pit: new THREE.SphereGeometry(1, 32, 24).scale(0.36, 0.48, 0.36),
     stem: new THREE.TubeGeometry(
       new THREE.QuadraticBezierCurve3(v(0, 0.8, 0), v(0.05, 1.5, 0), v(0.3, 2.05, 0)),
       24,
@@ -39,15 +39,21 @@ export function createHeroCherryParts() {
     }),
     flesh: new THREE.MeshStandardMaterial({
       color: "#7a0b1f",
-      roughness: 0.7,
+      roughness: 0.8,
+      envMapIntensity: 0.25,
       side: THREE.DoubleSide,
     }),
     hollow: new THREE.MeshStandardMaterial({
       color: "#4a0a14",
       roughness: 0.9,
+      envMapIntensity: 0.2,
       side: THREE.DoubleSide,
     }),
-    pitMat: new THREE.MeshStandardMaterial({ color: "#c9a777", roughness: 0.6 }),
+    pitMat: new THREE.MeshStandardMaterial({
+      color: "#a8804f",
+      roughness: 0.75,
+      envMapIntensity: 0.4,
+    }),
     stemMat: new THREE.MeshStandardMaterial({ color: "#6b8f3a", roughness: 0.7 }),
     leafMat: new THREE.MeshStandardMaterial({
       color: "#7cb553",
