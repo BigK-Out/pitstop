@@ -14,7 +14,8 @@ export default function Hero() {
   const ref = useRef(null);
   const reduced = useReducedMotion();
   const [webgl] = useState(hasWebGL);
-  const isStatic = reduced || !webgl;
+  const [sceneFailed, setSceneFailed] = useState(false);
+  const isStatic = reduced || !webgl || sceneFailed;
   const [sceneReady, setSceneReady] = useState(false);
 
   // Mount the 3D scene once the browser is idle so it never competes with first paint.
@@ -30,7 +31,8 @@ export default function Hero() {
   }, [webgl, reduced]);
   const progressRef = useScrollProgress(ref, !isStatic);
   const { hero } = brand;
-  const art = <SplitCherryArt className="pitstop-art" />;
+  // The pinned scrub starts on a whole cherry, so its placeholder must not spoil the split.
+  const art = <SplitCherryArt whole={!isStatic} className="pitstop-art" />;
 
   return (
     <section
@@ -42,7 +44,7 @@ export default function Hero() {
       <div className="pitstop-stage">
         <div className="pitstop-canvas" aria-hidden="true">
           {webgl && !reduced && sceneReady ? (
-            <ErrorBoundary fallback={art}>
+            <ErrorBoundary fallback={art} onError={() => setSceneFailed(true)}>
               <Suspense fallback={art}>
                 <PitStopScene progressRef={progressRef} />
               </Suspense>

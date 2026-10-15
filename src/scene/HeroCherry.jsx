@@ -20,8 +20,8 @@ export default function HeroCherry({ progressRef, animate, lite = false }) {
   const halfW = viewport.width / 2;
   // Portrait tablets have the intro copy lower down, so the cherry starts further down and smaller.
   const tablet = viewport.aspect > 0.6;
-  const startY = tablet ? -2 : -1.4;
-  const startScale = tablet ? 0.85 : Math.min(1, halfW * 0.54);
+  const startY = tablet ? -1.3 : -1.4;
+  const startScale = tablet ? 0.8 : Math.min(1, halfW * 0.54);
 
   useFrame(({ clock }) => {
     const t = pitStopTimeline(progressRef.current);

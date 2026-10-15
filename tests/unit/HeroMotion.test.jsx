@@ -22,6 +22,9 @@ describe("Hero motion modes", () => {
     const hero = container.querySelector("#top");
     expect(hero).not.toHaveClass("pitstop--static");
     expect(hero).not.toHaveAttribute("data-revealed");
+    expect(
+      container.querySelector(".pitstop-canvas svg[aria-label='A whole cherry on its stem']"),
+    ).not.toBeNull();
   });
 
   it("reduced motion shows the final frame without pinning", () => {

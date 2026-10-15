@@ -39,6 +39,10 @@ lifts out. Everything is built in code (no model files):
 - `src/components/SplitCherryArt.jsx` — static image used for reduced motion, browsers
   without WebGL, and while the 3D code loads.
 
+The 3D scene mounts once the browser is idle, so static art shows first and first paint is
+never blocked. Software WebGL renderers (detected in `webgl.js`) get a lighter tier from
+`sceneTier.js` that renders on scroll instead of continuously.
+
 ## Deploying
 
 See `SETUP_GUIDE.md`.

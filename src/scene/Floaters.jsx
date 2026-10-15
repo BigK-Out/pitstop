@@ -11,6 +11,9 @@ const { smoothstep } = THREE.MathUtils;
 // Floaters keep out of the copy: the left column on landscape screens, the bottom reveal band always.
 const bandFade = (ny) => smoothstep(ny, -0.55, -0.3);
 
+// Portrait frames put the copy in the top ~45%, so floaters fade out there too.
+const topFade = (ny) => 1 - smoothstep(ny, 0.1, 0.35);
+
 // Small cherries drifting upward behind the hero cherry; fog fades the distant ones.
 // Positions are stored in screen-normalised units so any aspect ratio gets the same spread.
 export default function Floaters({ count, animate }) {
@@ -36,7 +39,7 @@ export default function Floaters({ count, animate }) {
     const ny = THREE.MathUtils.euclideanModulo(item.ny + time * item.drift + 1.1, 2.2) - 1.1;
     const nx = wide ? -0.1 + ((item.nx + 0.95) / 1.9) * 1.05 : item.nx;
     group.position.set(nx * halfH * aspect, ny * halfH, item.z);
-    group.scale.setScalar(item.scale * bandFade(ny));
+    group.scale.setScalar(item.scale * bandFade(ny) * (wide ? 1 : topFade(ny)));
   };
 
   useFrame(({ clock }, delta) => {

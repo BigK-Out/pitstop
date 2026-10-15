@@ -1,6 +1,35 @@
 // Static final frame of the Pit Stop: shown before the 3D scene loads, without WebGL,
 // if the scene fails, and as the 3D fallback for reduced motion.
-export default function SplitCherryArt({ className }) {
+// `whole` draws the opening frame instead: one uncut cherry, used while the pinned scene loads.
+export default function SplitCherryArt({ className, whole = false }) {
+  if (whole) {
+    return (
+      <svg
+        className={className}
+        viewBox="0 0 400 400"
+        role="img"
+        aria-label="A whole cherry on its stem"
+      >
+        <circle cx="200" cy="250" r="100" fill="#c3142f" />
+        <path
+          d="M140 210 A70 70 0 0 1 170 178"
+          stroke="#fff"
+          strokeOpacity="0.35"
+          strokeWidth="8"
+          strokeLinecap="round"
+          fill="none"
+        />
+        <path
+          d="M200 152 C 204 100, 230 70, 260 52"
+          stroke="#6b8f3a"
+          strokeWidth="6"
+          strokeLinecap="round"
+          fill="none"
+        />
+        <path d="M260 52 C 280 30, 316 34, 324 50 C 302 64, 278 64, 260 52 Z" fill="#7cb553" />
+      </svg>
+    );
+  }
   return (
     <svg
       className={className}

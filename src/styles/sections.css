@@ -95,6 +95,22 @@
 
 .pitstop-canvas canvas {
   display: block;
+  animation: pitstop-fade-in 0.6s ease both;
+}
+
+@keyframes pitstop-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pitstop-canvas canvas {
+    animation: none;
+  }
 }
 
 .pitstop-art {
@@ -176,7 +192,8 @@
   visibility: visible;
 }
 
-@media (max-width: 767px) {
+/* Phones and portrait tablets: copy sits at the top, the cherry below it. */
+@media (max-width: 767px), (max-aspect-ratio: 13/10) {
   .pitstop-intro,
   .pitstop--static .pitstop-intro {
     top: calc(var(--header-h) + 5svh);

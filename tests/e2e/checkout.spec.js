@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-test("add to cart, change quantity, check out", async ({ page }) => {
+test("add to bag, change quantity, check out", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("button", { name: "Add to bag: Classic Dried" }).click();
   await page.getByRole("button", { name: "Add to bag: Sour Punch" }).click();
@@ -22,14 +22,14 @@ test("add to cart, change quantity, check out", async ({ page }) => {
   await expect(page.getByRole("button", { name: "Bag 0 items" })).toBeVisible();
 });
 
-test("cart survives a reload", async ({ page }) => {
+test("bag survives a reload", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("button", { name: "Add to bag: Mixed Bag" }).click();
   await page.reload();
   await expect(page.getByRole("button", { name: "Bag 1 item" })).toBeVisible();
 });
 
-test("Esc closes the cart and returns focus to the cart button", async ({ page }) => {
+test("Esc closes the bag and returns focus to the bag button", async ({ page }) => {
   await page.goto("/");
   const cartButton = page.getByRole("button", { name: "Bag 0 items" });
   await cartButton.click();
