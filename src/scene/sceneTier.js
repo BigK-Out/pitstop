@@ -2,7 +2,11 @@ import { useState } from "react";
 
 export function pickTier({ width, cores, reducedMotion }) {
   const light = width < 768 || (cores ?? 8) <= 4;
-  return { count: light ? 40 : 100, depthOfField: !light, animate: !reducedMotion };
+  return {
+    floaters: light ? 12 : 24,
+    dpr: light ? [1, 1.5] : [1, 1.75],
+    animate: !reducedMotion,
+  };
 }
 
 // Chosen once on mount; resizing does not rebuild the scene.

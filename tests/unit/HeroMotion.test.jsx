@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import App from "../../src/App";
 
 vi.mock("../../src/scene/webgl", () => ({ hasWebGL: () => true }));
+vi.mock("../../src/scene/PitStopScene", () => ({ default: () => null }));
 
 const mockMatchMedia = (reduce) =>
   vi.stubGlobal("matchMedia", (query) => ({

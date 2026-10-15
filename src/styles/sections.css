@@ -683,3 +683,12 @@ dialog::backdrop {
   justify-content: flex-end;
   gap: 0.75rem;
 }
+
+/* Static mode on desktop: keep the art clear of the reveal line beneath it. */
+@media (min-width: 768px) {
+  .pitstop--static .pitstop-art {
+    top: calc(var(--header-h) + 2rem);
+    width: min(36vw, 440px);
+    transform: none;
+  }
+}

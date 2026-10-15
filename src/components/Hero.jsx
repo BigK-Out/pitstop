@@ -1,18 +1,23 @@
-import { useRef, useState } from "react";
+import { Suspense, lazy, useRef, useState } from "react";
 import { brand } from "../content";
 import { useReducedMotion } from "../pitstop/useReducedMotion";
 import { useScrollProgress } from "../pitstop/useScrollProgress";
 import { hasWebGL } from "../scene/webgl";
 import Emph from "./Emph";
+import ErrorBoundary from "./ErrorBoundary";
 import SplitCherryArt from "./SplitCherryArt";
+
+// three.js loads after the page renders; the static art covers loading and failures.
+const PitStopScene = lazy(() => import("../scene/PitStopScene"));
 
 export default function Hero() {
   const ref = useRef(null);
   const reduced = useReducedMotion();
   const [webgl] = useState(hasWebGL);
   const isStatic = reduced || !webgl;
-  useScrollProgress(ref, !isStatic);
+  const progressRef = useScrollProgress(ref, !isStatic);
   const { hero } = brand;
+  const art = <SplitCherryArt className="pitstop-art" />;
 
   return (
     <section
@@ -23,7 +28,15 @@ export default function Hero() {
     >
       <div className="pitstop-stage">
         <div className="pitstop-canvas" aria-hidden="true">
-          <SplitCherryArt className="pitstop-art" />
+          {webgl && !reduced ? (
+            <ErrorBoundary fallback={art}>
+              <Suspense fallback={art}>
+                <PitStopScene progressRef={progressRef} />
+              </Suspense>
+            </ErrorBoundary>
+          ) : (
+            art
+          )}
         </div>
         <div className="pitstop-intro">
           <p className="label">{hero.label}</p>

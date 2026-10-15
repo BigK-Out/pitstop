@@ -10,7 +10,7 @@ function getShared() {
   return shared;
 }
 
-// Built-in cherry used until public/cherry.glb exists (or if it fails to load).
+// Small floating cherry: one merged geometry and material shared by every instance.
 export default function ProceduralCherry(props) {
   const { geometry, material } = getShared();
   return <mesh {...props} geometry={geometry} material={material} dispose={null} />;
