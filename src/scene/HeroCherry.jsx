@@ -8,12 +8,12 @@ const { lerp } = THREE.MathUtils;
 // Halves open toward the camera by this much at full split so the cut faces are visible.
 const OPEN = 0.7;
 
-export default function HeroCherry({ progressRef, animate }) {
+export default function HeroCherry({ progressRef, animate, lite = false }) {
   const root = useRef();
   const left = useRef();
   const right = useRef();
   const pit = useRef();
-  const parts = useMemo(createHeroCherryParts, []);
+  const parts = useMemo(() => createHeroCherryParts({ lite }), [lite]);
   const viewport = useThree((state) => state.viewport);
   // Side-by-side only on landscape screens; otherwise the cherry is centred and sized to fit.
   const wide = viewport.aspect >= 1.3;

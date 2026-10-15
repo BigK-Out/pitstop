@@ -13,7 +13,7 @@ describe("Hero when the 3D scene fails", () => {
   it("keeps the static art and the shop", async () => {
     const logged = vi.spyOn(console, "error").mockImplementation(() => {});
     const { container } = render(<App />);
-    await waitFor(() => expect(logged).toHaveBeenCalled());
+    await waitFor(() => expect(logged).toHaveBeenCalled(), { timeout: 3000 });
     expect(container.querySelector(".pitstop-canvas svg.pitstop-art")).not.toBeNull();
     expect(screen.getByRole("heading", { level: 1 })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Add to bag: Classic Dried" })).toBeInTheDocument();

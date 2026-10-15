@@ -12,7 +12,7 @@ const disc = (radius, yScale, angle, offsetX) =>
   new THREE.CircleGeometry(radius, 64).scale(1, yScale, 1).rotateY(angle).translate(offsetX, 0, 0);
 
 // Geometries and materials for the splitting hero cherry. Built once per scene.
-export function createHeroCherryParts() {
+export function createHeroCherryParts({ lite = false } = {}) {
   return {
     leftSkin: skinHalf(-Math.PI / 2),
     rightSkin: skinHalf(Math.PI / 2),
@@ -31,12 +31,14 @@ export function createHeroCherryParts() {
       .scale(1, 0.14, 0.5)
       .rotateZ(-0.5)
       .translate(0.62, 2.05, 0),
-    skin: new THREE.MeshPhysicalMaterial({
-      color: "#c3142f",
-      roughness: 0.28,
-      clearcoat: 1,
-      clearcoatRoughness: 0.15,
-    }),
+    skin: lite
+      ? new THREE.MeshStandardMaterial({ color: "#c3142f", roughness: 0.3, metalness: 0 })
+      : new THREE.MeshPhysicalMaterial({
+          color: "#c3142f",
+          roughness: 0.28,
+          clearcoat: 1,
+          clearcoatRoughness: 0.15,
+        }),
     flesh: new THREE.MeshStandardMaterial({
       color: "#7a0b1f",
       roughness: 0.8,

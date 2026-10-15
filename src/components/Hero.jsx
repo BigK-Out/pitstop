@@ -1,4 +1,4 @@
-import { Suspense, lazy, useRef, useState } from "react";
+import { Suspense, lazy, useEffect, useRef, useState } from "react";
 import { brand } from "../content";
 import { useReducedMotion } from "../pitstop/useReducedMotion";
 import { useScrollProgress } from "../pitstop/useScrollProgress";
@@ -15,6 +15,19 @@ export default function Hero() {
   const reduced = useReducedMotion();
   const [webgl] = useState(hasWebGL);
   const isStatic = reduced || !webgl;
+  const [sceneReady, setSceneReady] = useState(false);
+
+  // Mount the 3D scene once the browser is idle so it never competes with first paint.
+  useEffect(() => {
+    if (!webgl || reduced) return;
+    const ready = () => setSceneReady(true);
+    if (window.requestIdleCallback) {
+      const id = window.requestIdleCallback(ready, { timeout: 2000 });
+      return () => window.cancelIdleCallback?.(id);
+    }
+    const id = setTimeout(ready, 1200);
+    return () => clearTimeout(id);
+  }, [webgl, reduced]);
   const progressRef = useScrollProgress(ref, !isStatic);
   const { hero } = brand;
   const art = <SplitCherryArt className="pitstop-art" />;
@@ -28,7 +41,7 @@ export default function Hero() {
     >
       <div className="pitstop-stage">
         <div className="pitstop-canvas" aria-hidden="true">
-          {webgl && !reduced ? (
+          {webgl && !reduced && sceneReady ? (
             <ErrorBoundary fallback={art}>
               <Suspense fallback={art}>
                 <PitStopScene progressRef={progressRef} />

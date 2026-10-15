@@ -78,6 +78,11 @@ describe("createCherryGeometry", () => {
 describe("createHeroCherryParts", () => {
   const parts = createHeroCherryParts();
 
+  it("uses a physical skin by default and a cheaper one when lite", () => {
+    expect(parts.skin.isMeshPhysicalMaterial).toBe(true);
+    expect(createHeroCherryParts({ lite: true }).skin.isMeshPhysicalMaterial).toBeFalsy();
+  });
+
   it("builds every geometry and material", () => {
     for (const key of [
       "leftSkin",
