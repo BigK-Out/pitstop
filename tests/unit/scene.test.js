@@ -1,7 +1,8 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { createCherryGeometry } from "../../src/scene/cherryGeometry";
 import { createHeroCherryParts } from "../../src/scene/heroGeometry";
 import { pickTier } from "../../src/scene/sceneTier";
+import { isSoftwareRenderer } from "../../src/scene/webgl";
 
 describe("pickTier", () => {
   it("uses the full scene on capable desktops", () => {
@@ -24,6 +25,43 @@ describe("pickTier", () => {
 
   it("stops animation for reduced motion", () => {
     expect(pickTier({ width: 1440, cores: 8, reducedMotion: true }).animate).toBe(false);
+  });
+});
+
+describe("pickTier software renderer", () => {
+  it("renders the lite tier on demand", () => {
+    expect(pickTier({ width: 1440, cores: 8, reducedMotion: false, software: true })).toEqual({
+      floaters: 12,
+      dpr: [1, 1],
+      animate: false,
+    });
+  });
+});
+
+describe("isSoftwareRenderer", () => {
+  afterEach(() => vi.restoreAllMocks());
+
+  const stub = (renderer) =>
+    vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue({
+      getExtension: (n) =>
+        n === "WEBGL_debug_renderer_info" ? { UNMASKED_RENDERER_WEBGL: 1 } : { loseContext() {} },
+      getParameter: () => renderer,
+      RENDERER: 2,
+    });
+
+  it("detects SwiftShader", () => {
+    stub("ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero)))");
+    expect(isSoftwareRenderer()).toBe(true);
+  });
+
+  it("accepts a hardware GPU", () => {
+    stub("ANGLE (NVIDIA GeForce RTX 3060)");
+    expect(isSoftwareRenderer()).toBe(false);
+  });
+
+  it("returns false without WebGL", () => {
+    vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(null);
+    expect(isSoftwareRenderer()).toBe(false);
   });
 });
 

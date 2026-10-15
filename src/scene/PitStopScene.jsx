@@ -24,6 +24,22 @@ function StudioEnvironment() {
   return null;
 }
 
+// With frameloop="demand", redraw whenever the page scrolls or resizes.
+function InvalidateOnScroll() {
+  const invalidate = useThree((s) => s.invalidate);
+  useEffect(() => {
+    const redraw = () => invalidate();
+    window.addEventListener("scroll", redraw, { passive: true });
+    window.addEventListener("resize", redraw, { passive: true });
+    redraw();
+    return () => {
+      window.removeEventListener("scroll", redraw);
+      window.removeEventListener("resize", redraw);
+    };
+  }, [invalidate]);
+  return null;
+}
+
 // True while the tab is visible and the hero is on screen.
 function useStageVisible() {
   const [tabVisible, setTabVisible] = useState(() => !document.hidden);
@@ -64,6 +80,7 @@ export default function PitStopScene({ progressRef }) {
       <ambientLight intensity={0.5} />
       <directionalLight position={[-4, 6, 6]} intensity={2.2} color="#fff1e0" />
       <directionalLight position={[5, -2, -6]} intensity={1.2} color="#ffd6e0" />
+      {!tier.animate && <InvalidateOnScroll />}
       <StudioEnvironment />
       <HeroCherry progressRef={progressRef} animate={tier.animate} />
       <Floaters count={tier.floaters} animate={tier.animate} />

@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { isSoftwareRenderer } from "./webgl";
 
-export function pickTier({ width, cores, reducedMotion }) {
+export function pickTier({ width, cores, reducedMotion, software }) {
+  if (software) return { floaters: 12, dpr: [1, 1], animate: false };
   const light = width < 768 || (cores ?? 8) <= 4;
   return {
     floaters: light ? 12 : 24,
@@ -16,6 +18,7 @@ export function useSceneTier() {
       width: window.innerWidth,
       cores: navigator.hardwareConcurrency,
       reducedMotion: window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false,
+      software: isSoftwareRenderer(),
     }),
   );
   return tier;
