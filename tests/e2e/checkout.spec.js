@@ -2,11 +2,11 @@ import { expect, test } from "@playwright/test";
 
 test("add to cart, change quantity, check out", async ({ page }) => {
   await page.goto("/");
-  await page.getByRole("button", { name: "Add to cart: Classic Dried" }).click();
-  await page.getByRole("button", { name: "Add to cart: Sour Punch" }).click();
-  await page.getByRole("button", { name: "Cart 2 items" }).click();
+  await page.getByRole("button", { name: "Add to bag: Classic Dried" }).click();
+  await page.getByRole("button", { name: "Add to bag: Sour Punch" }).click();
+  await page.getByRole("button", { name: "Bag 2 items" }).click();
 
-  const drawer = page.getByRole("dialog", { name: "Your cart" });
+  const drawer = page.getByRole("dialog", { name: "Your bag" });
   await drawer.getByRole("button", { name: "Increase Classic Dried" }).click();
   await expect(drawer.getByText("$27.47")).toBeVisible();
   await drawer.getByRole("button", { name: "Checkout" }).click();
@@ -16,26 +16,26 @@ test("add to cart, change quantity, check out", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "Thanks, order placed!" })).toBeVisible();
   await expect(page.getByText(/^PIT-\d{6}$/)).toBeVisible();
   await page.getByRole("button", { name: "Back to the shop" }).click();
-  await expect(page.getByRole("button", { name: "Cart 0 items" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Bag 0 items" })).toBeVisible();
 
   await page.reload();
-  await expect(page.getByRole("button", { name: "Cart 0 items" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Bag 0 items" })).toBeVisible();
 });
 
 test("cart survives a reload", async ({ page }) => {
   await page.goto("/");
-  await page.getByRole("button", { name: "Add to cart: Mixed Bag" }).click();
+  await page.getByRole("button", { name: "Add to bag: Mixed Bag" }).click();
   await page.reload();
-  await expect(page.getByRole("button", { name: "Cart 1 item" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Bag 1 item" })).toBeVisible();
 });
 
 test("Esc closes the cart and returns focus to the cart button", async ({ page }) => {
   await page.goto("/");
-  const cartButton = page.getByRole("button", { name: "Cart 0 items" });
+  const cartButton = page.getByRole("button", { name: "Bag 0 items" });
   await cartButton.click();
-  await expect(page.getByRole("dialog", { name: "Your cart" })).toBeVisible();
+  await expect(page.getByRole("dialog", { name: "Your bag" })).toBeVisible();
   await page.keyboard.press("Escape");
-  await expect(page.getByRole("dialog", { name: "Your cart" })).toBeHidden();
+  await expect(page.getByRole("dialog", { name: "Your bag" })).toBeHidden();
   await expect(cartButton).toBeFocused();
 });
 

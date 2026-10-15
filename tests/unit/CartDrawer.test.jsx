@@ -9,10 +9,10 @@ vi.mock("../../src/scene/webgl", () => ({ hasWebGL: () => false }));
 
 async function openCartWith(user, ...names) {
   for (const name of names) {
-    await user.click(screen.getByRole("button", { name: `Add to cart: ${name}` }));
+    await user.click(screen.getByRole("button", { name: `Add to bag: ${name}` }));
   }
-  await user.click(screen.getByRole("button", { name: /^Cart \d/ }));
-  return screen.getByRole("dialog", { name: "Your cart" });
+  await user.click(screen.getByRole("button", { name: /^Bag \d/ }));
+  return screen.getByRole("dialog", { name: "Your bag" });
 }
 
 describe("cart drawer", () => {
@@ -31,8 +31,8 @@ describe("cart drawer", () => {
     render(<App />);
     const drawer = await openCartWith(user, "Classic Dried");
     await user.click(within(drawer).getByRole("button", { name: "Decrease Classic Dried" }));
-    expect(within(drawer).getByText("Your cart is empty.")).toBeInTheDocument();
-    expect(within(drawer).getByRole("heading", { name: "Your cart" })).toHaveFocus();
+    expect(within(drawer).getByText("Your bag is empty.")).toBeInTheDocument();
+    expect(within(drawer).getByRole("heading", { name: "Your bag" })).toHaveFocus();
   });
 
   it("removes a line with the remove button", async () => {
@@ -41,7 +41,7 @@ describe("cart drawer", () => {
     const drawer = await openCartWith(user, "Classic Dried", "Sour Punch");
     await user.click(within(drawer).getByRole("button", { name: "Remove Sour Punch" }));
     expect(within(drawer).queryByText("Sour Punch")).not.toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Cart 1 item" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Bag 1 item" })).toBeInTheDocument();
   });
 
   it("disables increase at 99", async () => {
@@ -65,7 +65,7 @@ describe("cart drawer", () => {
     const user = userEvent.setup();
     render(<App />);
     const drawer = await openCartWith(user, "Classic Dried");
-    await user.click(within(drawer).getByRole("button", { name: "Close cart" }));
+    await user.click(within(drawer).getByRole("button", { name: "Close bag" }));
     expect(drawer).not.toHaveAttribute("open");
   });
 });
@@ -84,7 +84,7 @@ describe("checkout", () => {
     const number = within(checkout).getByText(/^PIT-\d{6}$/).textContent;
     expect(await screen.findByText(`Order placed: ${number}`)).toBeInTheDocument();
     expect(within(checkout).getByText(/^PIT-\d{6}$/)).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Cart 0 items" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Bag 0 items" })).toBeInTheDocument();
     await user.click(within(checkout).getByRole("button", { name: "Back to the shop" }));
     expect(checkout).not.toHaveAttribute("open");
   });

@@ -3,33 +3,34 @@ import { formatPrice } from "../cart/format";
 import { useAnnounce } from "./Announcer";
 import CherryArt from "./CherryArt";
 
-export default function ProductCard({ product }) {
+export default function ProductCard({ product, index }) {
   const { add } = useCart();
   const announce = useAnnounce();
 
   const handleAdd = () => {
     add(product.id);
-    announce(`Added ${product.name} to cart`);
+    announce(`Added ${product.name} to bag`);
   };
 
   return (
-    <li className="card">
-      <CherryArt variant={product.art} label={product.artLabel} />
-      <div className="card-body">
-        <h3>{product.name}</h3>
-        <p>{product.description}</p>
-        <div className="card-foot">
-          <span className="price">{formatPrice(product.priceCents)}</span>
-          <button
-            type="button"
-            className="button"
-            onClick={handleAdd}
-            aria-label={`Add to cart: ${product.name}`}
-          >
-            Add to cart
-          </button>
-        </div>
+    <li className="product">
+      <div className={`plate plate--${product.art}`}>
+        <span className="plate-fig">Fig. {String(index + 1).padStart(2, "0")}</span>
+        <CherryArt variant={product.art} label={product.artLabel} />
       </div>
+      <div className="product-head">
+        <h3>{product.name}</h3>
+        <span className="price">{formatPrice(product.priceCents)}</span>
+      </div>
+      <p className="product-desc">{product.description}</p>
+      <button
+        type="button"
+        className="button button-outline"
+        onClick={handleAdd}
+        aria-label={`Add to bag: ${product.name}`}
+      >
+        Add to bag <span aria-hidden="true">+</span>
+      </button>
     </li>
   );
 }

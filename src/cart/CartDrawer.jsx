@@ -28,16 +28,16 @@ export default function CartDrawer({ open, onClose, onCheckout }) {
       <div className="drawer-inner">
         <div className="drawer-head">
           <h2 id="cart-title" ref={headingRef} tabIndex={-1}>
-            Your cart
+            Your bag
           </h2>
-          <button type="button" className="icon-button" onClick={onClose} aria-label="Close cart">
+          <button type="button" className="icon-button" onClick={onClose} aria-label="Close bag">
             ×
           </button>
         </div>
 
         {lines.length === 0 ? (
           <div className="empty">
-            <p>Your cart is empty.</p>
+            <p>Your bag is empty.</p>
             <a className="button" href="#shop" onClick={onClose}>
               Browse cherries
             </a>

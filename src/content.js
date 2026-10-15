@@ -1,4 +1,5 @@
 // All site copy, products and prices. Pure data: also imported by vite.config.js in Node.
+// Emphasis is written as segments: { text } for plain words, { em } for italic cherry words.
 
 export const brand = {
   name: "Pitstop",
@@ -8,38 +9,45 @@ export const brand = {
   // Public URL of the deployed site, with trailing slash. Used for canonical and share tags.
   siteUrl: "https://bigk-out.github.io/pitstop/",
   hero: {
-    eyebrow: "Small-batch dried cherries",
-    headline: "Cherries, slowed down.",
-    lead: "We pick ripe orchard cherries, pit them by hand and dry them slowly in the sun. Chewy, tart-sweet, and nothing else in the bag.",
-    cta: "Shop cherries",
+    label: "Batch Nº 07 — Montmorency, 2026",
+    headline: [{ text: "Cherries, " }, { em: "slowly" }, { text: " sun-dried." }],
+    primaryCta: "Shop the harvest",
+    secondaryCta: "Our orchard",
+    reveal: [{ text: "We took the " }, { em: "pit" }, { text: " out." }],
+  },
+  statement: {
+    label: "Ingredients",
+    parts: [{ text: "Cherries. " }, { em: "That's the list." }],
   },
   shop: {
+    label: "The harvest",
     title: "Pick your pouch",
-    intro: "Four ways to snack on a cherry. Every pouch is 150 g unless it says otherwise.",
   },
-  story: {
+  orchard: {
+    label: "The orchard",
     title: "From orchard to pouch",
-    items: [
+    steps: [
       {
-        title: "Orchard grown",
-        body: "Our cherries come from family orchards and are picked at peak ripeness, never early.",
+        title: "Picked ripe",
+        body: "Family orchards, picked at peak ripeness and never early.",
       },
       {
-        title: "No added sugar",
-        body: "Our Classic pouch has one ingredient: cherries. Dried slowly so their own sugar does the work.",
+        title: "Pitted by hand",
+        body: "Checked one by one. The pit is the only thing we take out.",
       },
       {
-        title: "Compostable pouch",
-        body: "Every pouch is home-compostable, so the only leftover is the pit, and we already took that out.",
+        title: "Sun-dried slow",
+        body: "Their own sugar does the work, then into a home-compostable pouch.",
       },
     ],
   },
   faq: {
-    title: "Questions",
+    label: "Questions",
+    heading: [{ text: "Good to " }, { em: "know." }],
     items: [
       {
         q: "Is this a real shop?",
-        a: "No. Pitstop is a demo store. You can fill a cart and place a demo order, but nothing is charged and nothing ships.",
+        a: "No. Pitstop is a demo store. You can fill a bag and place a demo order, but nothing is charged and nothing ships.",
       },
       {
         q: "Are there pits in the cherries?",
@@ -72,7 +80,7 @@ export const products = [
     description: "Plump, chewy sun-dried cherries. Our original, and just fruit.",
     priceCents: 899,
     art: "classic",
-    artLabel: "Two deep red cherries joined at the stem",
+    artLabel: "Line drawing of two cherries joined at the stem",
   },
   {
     id: "sour",
@@ -80,7 +88,7 @@ export const products = [
     description: "Tart Montmorency cherries with a dusting of sour citrus. Pucker up.",
     priceCents: 949,
     art: "sour",
-    artLabel: "Two bright red cherries dusted with sour sugar",
+    artLabel: "Line drawing of two cherries dusted with sour sugar",
   },
   {
     id: "choc",
@@ -88,7 +96,7 @@ export const products = [
     description: "Dried cherries half-dipped in 70% dark chocolate.",
     priceCents: 1199,
     art: "choc",
-    artLabel: "Two cherries half-dipped in dark chocolate",
+    artLabel: "Line drawing of two cherries half-dipped in chocolate",
   },
   {
     id: "mixed",
@@ -96,6 +104,6 @@ export const products = [
     description: "Classic, sour and choc-dipped together in one 300 g pouch.",
     priceCents: 1499,
     art: "mixed",
-    artLabel: "Three cherries in different shades of red",
+    artLabel: "Line drawing of three cherries on one stem",
   },
 ];

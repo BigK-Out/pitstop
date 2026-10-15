@@ -1,16 +1,28 @@
 :root {
-  --cream: #fff7f0;
-  --cream-2: #ffeee2;
-  --ink: #2a0b12;
-  --muted: #6b3f48;
-  --cherry: #a3102a;
-  --cherry-dark: #7a0b1f;
-  --leaf: #3f7d20;
-  --radius: 18px;
-  --shadow: 0 10px 30px rgb(122 11 31 / 0.12);
-  --font-display: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
-  --font-body: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --paper: #f4ede3;
+  --paper-2: #ebe1d3;
+  --ink: #2b0d12;
+  --cherry: #8c1c2b;
+  --cherry-bright: #c3142f;
+  --muted: #5a3a40;
+  --plate-classic: #8c1c2b;
+  --plate-sour: #d9a441;
+  --plate-choc: #4a2617;
+  --plate-mixed: #c46a7a;
+  --rule: rgb(43 13 18 / 0.15);
+  --font-display: "Fraunces Variable", Georgia, serif;
+  --font-body: "Inter Variable", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --max: 1280px;
+  --gutter: 24px;
+  --edge: max(var(--gutter), (100% - var(--max)) / 2);
+  --header-h: 64px;
   color-scheme: light;
+}
+
+@media (max-width: 767px) {
+  :root {
+    --gutter: 16px;
+  }
 }
 
 *,
@@ -31,20 +43,28 @@ html {
 
 body {
   margin: 0;
-  font-family: var(--font-body);
-  line-height: 1.6;
+  background: var(--paper);
   color: var(--ink);
-  /* Shown when WebGL is unavailable; the canvas covers it otherwise. */
-  background: linear-gradient(160deg, #ffd6c2, #ffb38a) fixed;
+  font: 400 1rem/1.6 var(--font-body);
   -webkit-font-smoothing: antialiased;
 }
 
 h1,
 h2,
 h3 {
-  margin: 0 0 0.5em;
+  margin: 0;
   font-family: var(--font-display);
-  line-height: 1.1;
+  font-weight: 340;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+h1 em,
+h2 em,
+.statement-text em,
+.pitstop-reveal-line em {
+  font-style: italic;
+  color: var(--cherry);
 }
 
 svg {
@@ -53,13 +73,16 @@ svg {
 }
 
 a {
-  color: var(--cherry);
+  color: inherit;
 }
 
 :focus-visible {
-  outline: 3px solid var(--cherry);
+  outline: 2px solid var(--cherry);
   outline-offset: 3px;
-  border-radius: 4px;
+}
+
+[id] {
+  scroll-margin-top: calc(var(--header-h) + 16px);
 }
 
 .visually-hidden {
@@ -80,9 +103,8 @@ a {
   left: 1rem;
   z-index: 100;
   padding: 0.6rem 1rem;
-  border-radius: 8px;
   background: var(--ink);
-  color: #fff;
+  color: var(--paper);
 }
 
 .skip-link:focus {
@@ -90,42 +112,54 @@ a {
 }
 
 .container {
-  width: min(1100px, 100% - 2rem);
+  width: min(var(--max), 100% - 2 * var(--gutter));
   margin-inline: auto;
+}
+
+.label {
+  margin: 0 0 1rem;
+  color: var(--cherry);
+  font: 600 0.7rem/1.2 var(--font-body);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
 }
 
 .button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.4rem;
+  gap: 0.5rem;
   min-height: 44px;
-  padding: 0.6rem 1.2rem;
-  border: 2px solid var(--cherry);
+  padding: 0.75rem 1.4rem;
+  border: 1px solid var(--ink);
   border-radius: 999px;
-  background: var(--cherry);
-  color: #fff;
-  font: 600 1rem/1 var(--font-body);
+  background: var(--ink);
+  color: var(--paper);
+  font: 500 0.95rem/1 var(--font-body);
   text-decoration: none;
   cursor: pointer;
   transition:
-    background 0.15s,
-    border-color 0.15s;
+    background 0.2s,
+    color 0.2s,
+    border-color 0.2s;
 }
 
 .button:hover {
-  border-color: var(--cherry-dark);
-  background: var(--cherry-dark);
+  border-color: var(--cherry);
+  background: var(--cherry);
 }
 
+.button-outline,
 .button-ghost {
   background: transparent;
-  color: var(--cherry);
+  color: var(--ink);
 }
 
+.button-outline:hover,
 .button-ghost:hover {
-  background: var(--cream-2);
-  color: var(--cherry-dark);
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--paper);
 }
 
 .button-block {
@@ -147,7 +181,7 @@ a {
 }
 
 .icon-button:hover {
-  background: var(--cream-2);
+  background: var(--paper-2);
 }
 
 .link-button {
@@ -159,8 +193,4 @@ a {
   font-size: 0.875rem;
   text-decoration: underline;
   cursor: pointer;
-}
-
-[id] {
-  scroll-margin-top: 80px;
 }

@@ -15,15 +15,15 @@ export default function Header({ onOpenCart }) {
             <a href="#shop">Shop</a>
           </li>
           <li>
-            <a href="#story">Story</a>
+            <a href="#orchard">Orchard</a>
           </li>
           <li>
             <a href="#faq">FAQ</a>
           </li>
         </ul>
       </nav>
-      <button type="button" className="button button-ghost" onClick={onOpenCart}>
-        Cart <span className="badge">{count}</span>
+      <button type="button" className="bag-button" onClick={onOpenCart}>
+        Bag <span className="bag-count">{count}</span>
         <span className="visually-hidden"> {count === 1 ? "item" : "items"}</span>
       </button>
     </header>

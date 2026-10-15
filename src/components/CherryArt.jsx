@@ -1,45 +1,46 @@
-const BACKGROUNDS = {
-  classic: "#ffe3d6",
-  sour: "#fff1c9",
-  choc: "#f3dfd2",
-  mixed: "#ffd9e0",
-};
+const SUGAR = [
+  [64, 146],
+  [86, 120],
+  [92, 152],
+  [124, 128],
+  [146, 154],
+  [140, 122],
+  [110, 162],
+];
 
-const STEMS = "M80 98 C 86 62, 104 38, 120 26 M130 102 C 128 70, 123 46, 120 26";
-
-function Cherry({ cx, cy, r, fill }) {
-  return (
-    <g>
-      <circle cx={cx} cy={cy} r={r} fill={fill} />
-      <circle cx={cx - r * 0.35} cy={cy - r * 0.35} r={r * 0.22} fill="#fff" opacity="0.4" />
-    </g>
-  );
-}
-
-// Product illustration: two (or three) cherries on a stem, varied per product.
+// Product line illustration. Drawn in currentColor so each plate sets its own ink.
 export default function CherryArt({ variant, label }) {
   return (
-    <svg className="cherry-art" viewBox="0 0 200 150" role="img" aria-label={label}>
-      <rect width="200" height="150" fill={BACKGROUNDS[variant]} />
-      <path d={STEMS} stroke="#3f7d20" strokeWidth="4" fill="none" strokeLinecap="round" />
-      <path d="M120 26 C 138 10, 160 14, 166 24 C 150 34, 134 34, 120 26 Z" fill="#5aa12e" />
-      {variant === "mixed" && <Cherry cx={104} cy={128} r={17} fill="#e0485f" />}
-      <Cherry cx={80} cy={108} r={26} fill={variant === "sour" ? "#d81e3a" : "#a3102a"} />
-      <Cherry cx={130} cy={112} r={24} fill={variant === "mixed" ? "#7a0b1f" : "#b3132b"} />
+    <svg
+      className="cherry-art"
+      viewBox="0 0 200 200"
+      role="img"
+      aria-label={label}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M78 108 C 84 72, 104 48, 124 34 M134 114 C 132 82, 128 58, 124 34" />
+      <path d="M124 34 C 140 18, 164 22, 172 34 C 156 46, 136 44, 124 34 Z" />
+      <path d="M128 34 C 144 31, 158 31, 168 34" opacity="0.6" />
+      {variant === "mixed" && <circle cx="104" cy="156" r="18" />}
+      <circle cx="78" cy="136" r="28" />
+      <circle cx="134" cy="140" r="26" />
+      <path d="M64 128 a 15 15 0 0 1 11 -9" opacity="0.7" />
+      <path d="M121 132 a 14 14 0 0 1 10 -8" opacity="0.7" />
       {variant === "choc" && (
-        <g fill="#4a2617">
-          <path d="M54 108 a26 26 0 0 0 52 0 Z" />
-          <path d="M106 112 a24 24 0 0 0 48 0 Z" />
+        <g fill="currentColor" stroke="none" opacity="0.85">
+          <path d="M50 136 a28 28 0 0 0 56 0 Z" />
+          <path d="M108 140 a26 26 0 0 0 52 0 Z" />
         </g>
       )}
       {variant === "sour" && (
-        <g fill="#fff" opacity="0.85">
-          <circle cx="70" cy="118" r="2" />
-          <circle cx="88" cy="96" r="1.6" />
-          <circle cx="94" cy="120" r="2" />
-          <circle cx="122" cy="104" r="1.8" />
-          <circle cx="140" cy="122" r="2" />
-          <circle cx="134" cy="98" r="1.5" />
+        <g fill="currentColor" stroke="none">
+          {SUGAR.map(([x, y]) => (
+            <circle key={`${x}-${y}`} cx={x} cy={y} r="2.2" />
+          ))}
         </g>
       )}
     </svg>
